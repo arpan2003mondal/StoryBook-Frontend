@@ -1,28 +1,40 @@
-import React, { useState } from 'react';
-import './RegisterUser.css';
-import { validateUsername, validateEmail, validatePassword, validateConfirmPassword } from '../validators/validators';
-import { messages } from '../messages/messages';
+import React, { useState, useEffect } from 'react';
+import '../styles/RegisterUser.css';
+import { validateUsername, validateEmail, validatePassword, validateConfirmPassword, Validator } from '../validators/Validation';
+import { Messages, messages } from '../messages/messages';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { UserRegisterRequestState } from '../model/UserRegisterRequest';
 import { FormErrorState } from '../model/FormErrorState';
 
+
+
+interface TouchedState {
+  name: boolean;
+  email: boolean;
+  password: boolean;
+  confirmPassword: boolean;
+}
+
 const RegisterUser = () => {
   const navigate = useNavigate(); // Moved inside the component to fix the React Hook error
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<UserRegisterRequestState>({
     name: '',
     email: '',
     password: '',
     confirmPassword: ''
   });
 
-  const [errors, setErrors] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
+
+
+  const [formErrors, setFormErrors] = useState<FormErrorState>({
+    nameError: '',
+    emailError: '',
+    passwordError: '',
+    confirmPasswordError: ''
   });
+
   
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -30,73 +42,55 @@ const RegisterUser = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData(prevState => ({ ...prevState, [name]: value }));
+
     validateField(name, value);
   };
 
-  const validateField = (name: string, value: string) => {
-    let newErrors = { ...errors };
-    
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    axios.post('/api/auth/register', formData)
+      .then(response => {
+        setSuccessMessage("Registration successful! Redirecting to login...");
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      })
+      .catch(error => {
+        setErrorMessage(error.response?.data?.message || "Registration failed. Please try again.");
+      });
+  }
+
+
+  const validateField = (name: string, value: any) : void => {
+    let errors = formErrors;
+
     switch (name) {
       case 'name':
-        newErrors.name = validateUsername(value);
+        errors.nameError = validateUsername(value) ? '' : Messages.INVALID_NAME;
         break;
       case 'email':
-        newErrors.email = validateEmail(value);
+        errors.emailError = validateEmail(value) ? '' : Messages.INVALID_EMAIL;
         break;
       case 'password':
-        newErrors.password = validatePassword(value);
-        if (formData.confirmPassword) {
-          newErrors.confirmPassword = validateConfirmPassword(value, formData.confirmPassword);
-        }
+        errors.passwordError = validatePassword(value) ? '' : Messages.INVALID_PASSWORD;
         break;
       case 'confirmPassword':
-        newErrors.confirmPassword = validateConfirmPassword(formData.password, value);
-        break;
-      default:
+        errors.confirmPasswordError = validateConfirmPassword(value, formData.password) ? '' : Messages.PASSWORD_MISMATCH;
         break;
     }
-    
-    setErrors(newErrors);
-    const hasErrors = Object.values(newErrors).some((err) => err !== '');
-    const allFieldsFilled = !!(formData.name && formData.email && formData.password && formData.confirmPassword);
-    setIsValid(!hasErrors && allFieldsFilled);
-  };
+    setFormErrors(errors);
 
-  const toHome = () => {
-    navigate('/');
-  };
+    // Check overall form validity
+    setIsValid(Validator.validateUserRegisterRequest(formData) &&
+  Object.values(errors).every(error => error === '')  );
+  }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSuccessMessage('');
-    setErrorMessage('');
-    
-    if (!isValid) {
-      setErrorMessage('Please fix all errors before submitting.');
-      return;
-    }
 
-    try {
-      const registerRequest = {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password
-      };
-
-      const response = await axios.post('http://localhost:1234/users/register', registerRequest, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      setSuccessMessage('Registration successful! Redirecting to home...');
-      console.log('Registration successful:', response.data);
-      setTimeout(toHome, 2000);
-    } catch (error: any) {
-      setErrorMessage(error.response?.data?.message || 'Error during registration. Please try again.');
-      console.error('Error during registration:', error);
-    }
-  };
+  
 
   return (
     <div className="register-container">
@@ -115,10 +109,11 @@ const RegisterUser = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className={`form-input ${errors.name ? 'error-input' : ''}`}
+              onBlur={handleBlur}
+              className={`form-input ${touched.name && errors.nameError ? 'error-input' : ''}`}
               placeholder="Enter your full name"
             />
-            {errors.name && <span className="error-message">{errors.name}</span>}
+            {touched.name && errors.nameError && <span className="error-message">{errors.nameError}</span>}
           </div>
 
           <div className="form-group">
@@ -129,10 +124,11 @@ const RegisterUser = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className={`form-input ${errors.email ? 'error-input' : ''}`}
+              onBlur={handleBlur}
+              className={`form-input ${touched.email && errors.emailError ? 'error-input' : ''}`}
               placeholder="Enter your email address"
             />
-            {errors.email && <span className="error-message">{errors.email}</span>}
+            {touched.email && errors.emailError && <span className="error-message">{errors.emailError}</span>}
           </div>
 
           <div className="form-group">
@@ -143,10 +139,11 @@ const RegisterUser = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className={`form-input ${errors.password ? 'error-input' : ''}`}
+              onBlur={handleBlur}
+              className={`form-input ${touched.password && errors.passwordError ? 'error-input' : ''}`}
               placeholder="Minimum 6 characters"
             />
-            {errors.password && <span className="error-message">{errors.password}</span>}
+            {touched.password && errors.passwordError && <span className="error-message">{errors.passwordError}</span>}
           </div>
 
           <div className="form-group">
@@ -157,10 +154,11 @@ const RegisterUser = () => {
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className={`form-input ${errors.confirmPassword ? 'error-input' : ''}`}
+              onBlur={handleBlur}
+              className={`form-input ${touched.confirmPassword && confirmPasswordError ? 'error-input' : ''}`}
               placeholder="Confirm your password"
             />
-            {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
+            {touched.confirmPassword && confirmPasswordError && <span className="error-message">{confirmPasswordError}</span>}
           </div>
 
           {successMessage && <div className="success-message">{successMessage}</div>}
