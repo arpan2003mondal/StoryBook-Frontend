@@ -1,25 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { FormEvent, useState } from 'react';
 import '../styles/RegisterUser.css';
-import { validateUsername, validateEmail, validatePassword, validateConfirmPassword, Validator } from '../validators/Validation';
-import { Messages, messages } from '../messages/messages';
+import { Validator } from '../validators/Validation';
+import { Messages } from '../messages/messages';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { UserRegisterRequestState } from '../model/UserRegisterRequest';
 import { FormErrorState } from '../model/FormErrorState';
 
 
-
-interface TouchedState {
-  name: boolean;
-  email: boolean;
-  password: boolean;
-  confirmPassword: boolean;
-}
-
 const RegisterUser = () => {
   const navigate = useNavigate(); // Moved inside the component to fix the React Hook error
 
-  const [formData, setFormData] = useState<UserRegisterRequestState>({
+  const [formData, setFormData] = useState<UserRegisterRequestState & { confirmPassword: string }>({
     name: '',
     email: '',
     password: '',
@@ -47,21 +39,20 @@ const RegisterUser = () => {
     validateField(name, value);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
     setSuccessMessage("");
 
-    axios.post('/api/auth/register', formData)
-      .then(response => {
-        setSuccessMessage("Registration successful! Redirecting to login...");
-        setTimeout(() => {
-          navigate('/login');
-        }, 2000);
-      })
-      .catch(error => {
-        setErrorMessage(error.response?.data?.message || "Registration failed. Please try again.");
-      });
+    try {
+      const response = await axios.post('/users/register', formData);
+      setSuccessMessage(response.data);
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
+    } catch (error: any) {
+      setErrorMessage(error.response?.data?.message || "Registration failed. Please try again.");
+    }
   }
 
 
@@ -70,16 +61,16 @@ const RegisterUser = () => {
 
     switch (name) {
       case 'name':
-        errors.nameError = validateUsername(value) ? '' : Messages.INVALID_NAME;
+        errors.nameError = Validator.validateUsername(value) ? '' : Messages.INVALID_NAME;
         break;
       case 'email':
-        errors.emailError = validateEmail(value) ? '' : Messages.INVALID_EMAIL;
+        errors.emailError = Validator.validateEmail(value) ? '' : Messages.INVALID_EMAIL;
         break;
       case 'password':
-        errors.passwordError = validatePassword(value) ? '' : Messages.INVALID_PASSWORD;
+        errors.passwordError = Validator.validatePassword(value) ? '' : Messages.INVALID_PASSWORD;
         break;
       case 'confirmPassword':
-        errors.confirmPasswordError = validateConfirmPassword(value, formData.password) ? '' : Messages.PASSWORD_MISMATCH;
+        errors.confirmPasswordError = Validator.validateConfirmPassword(value, formData.password) ? '' : Messages.PASSWORD_MISMATCH;
         break;
     }
     setFormErrors(errors);
@@ -109,11 +100,10 @@ const RegisterUser = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              onBlur={handleBlur}
-              className={`form-input ${touched.name && errors.nameError ? 'error-input' : ''}`}
+              className={`form-input ${formErrors.nameError ? 'error-input' : ''}`}
               placeholder="Enter your full name"
             />
-            {touched.name && errors.nameError && <span className="error-message">{errors.nameError}</span>}
+            {formErrors.nameError && <span className="error-message">{formErrors.nameError}</span>}
           </div>
 
           <div className="form-group">
@@ -124,11 +114,10 @@ const RegisterUser = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              onBlur={handleBlur}
-              className={`form-input ${touched.email && errors.emailError ? 'error-input' : ''}`}
+              className={`form-input ${formErrors.emailError ? 'error-input' : ''}`}
               placeholder="Enter your email address"
             />
-            {touched.email && errors.emailError && <span className="error-message">{errors.emailError}</span>}
+            {formErrors.emailError && <span className="error-message">{formErrors.emailError}</span>}
           </div>
 
           <div className="form-group">
@@ -139,11 +128,10 @@ const RegisterUser = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              onBlur={handleBlur}
-              className={`form-input ${touched.password && errors.passwordError ? 'error-input' : ''}`}
+              className={`form-input ${formErrors.passwordError ? 'error-input' : ''}`}
               placeholder="Minimum 6 characters"
             />
-            {touched.password && errors.passwordError && <span className="error-message">{errors.passwordError}</span>}
+            {formErrors.passwordError && <span className="error-message">{formErrors.passwordError}</span>}
           </div>
 
           <div className="form-group">
@@ -154,11 +142,10 @@ const RegisterUser = () => {
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              onBlur={handleBlur}
-              className={`form-input ${touched.confirmPassword && confirmPasswordError ? 'error-input' : ''}`}
+              className={`form-input ${formErrors.confirmPasswordError ? 'error-input' : ''}`}
               placeholder="Confirm your password"
             />
-            {touched.confirmPassword && confirmPasswordError && <span className="error-message">{confirmPasswordError}</span>}
+            {formErrors.confirmPasswordError && <span className="error-message">{formErrors.confirmPasswordError}</span>}
           </div>
 
           {successMessage && <div className="success-message">{successMessage}</div>}

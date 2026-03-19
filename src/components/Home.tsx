@@ -1,12 +1,16 @@
 import React, { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Home.css';
+import '../styles/Home.css';
 
 const Home: FC = () => {
   const navigate = useNavigate();
 
   const goToRegister = () => {
     navigate('/register');
+  };
+
+  const goToLogin = () => {
+    navigate('/login');
   };
 
   return (
@@ -19,7 +23,7 @@ const Home: FC = () => {
           <button className="btn btn-primary" onClick={goToRegister}>
             Create Account
           </button>
-          <button className="btn btn-secondary">
+          <button className="btn btn-secondary" onClick={goToLogin}>
             Sign In
           </button>
         </div>

@@ -1,0 +1,156 @@
+.detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.back-button {
+  padding: 10px 20px;
+  background-color: #667eea;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 30px;
+  transition: background-color 0.3s;
+}
+
+.back-button:hover {
+  background-color: #5568d3;
+}
+
+.detail-content {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 40px;
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.detail-cover {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.detail-cover img {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.detail-info h1 {
+  color: #333;
+  font-size: 32px;
+  margin: 0 0 20px 0;
+}
+
+.meta-info {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.meta-info p {
+  margin: 10px 0;
+  color: #555;
+  font-size: 16px;
+}
+
+.meta-info strong {
+  color: #333;
+  font-weight: 600;
+}
+
+.price {
+  color: #27ae60;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.description-section {
+  margin: 30px 0;
+}
+
+.description-section h2 {
+  color: #333;
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
+.description-section p {
+  color: #666;
+  line-height: 1.8;
+  font-size: 16px;
+}
+
+.actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.audio-button,
+.add-to-cart-btn {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s;
+}
+
+.audio-button {
+  background-color: #3498db;
+  color: white;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.audio-button:hover {
+  background-color: #2980b9;
+}
+
+.add-to-cart-btn {
+  background-color: #27ae60;
+  color: white;
+}
+
+.add-to-cart-btn:hover {
+  background-color: #229954;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 18px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .detail-content {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .detail-info h1 {
+    font-size: 24px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .audio-button,
+  .add-to-cart-btn {
+    width: 100%;
+  }
+}

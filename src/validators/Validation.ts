@@ -15,7 +15,7 @@ export class Validator{
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
         return passwordRegex.test(password);
     }
-    static confirmPassword = (confirmPassword: string, password: string) => {
+    static validateConfirmPassword = (confirmPassword: string, password: string) => {
         return confirmPassword === password;
     }
     

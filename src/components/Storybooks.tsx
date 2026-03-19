@@ -1,0 +1,157 @@
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AuthService } from '../services/AuthService';
+import { StoryBookService } from '../services/StoryBookService';
+import { StorybookResponse } from '../model/StorybookResponse';
+import '../styles/Storybooks.css';
+
+const Storybooks = () => {
+  const navigate = useNavigate();
+  const [storybooks, setStorybooks] = useState<StorybookResponse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+
+  useEffect(() => {
+    fetchAllStorybooks();
+  }, [navigate]);
+
+  const fetchAllStorybooks = async () => {
+    try {
+      setLoading(true);
+      const data = await StoryBookService.getAllStorybooks();
+      setStorybooks(data);
+      setError('');
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        AuthService.logout();
+        navigate('/login');
+      } else {
+        setError(err.response?.data?.message || 'Failed to fetch storybooks');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchKeyword.trim()) {
+      fetchAllStorybooks();
+      return;
+    }
+
+    try {
+      setIsSearching(true);
+      const data = await StoryBookService.searchStorybooks(searchKeyword);
+      setStorybooks(data);
+      setError('');
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        AuthService.logout();
+        navigate('/login');
+      } else {
+        setError(err.response?.data?.message || 'Failed to search storybooks');
+      }
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearchKeyword('');
+    fetchAllStorybooks();
+  };
+
+  const handleViewDetails = (id: number) => {
+    navigate(`/storybooks/${id}`);
+  };
+
+  const handleLogout = () => {
+    AuthService.logout();
+    navigate('/login');
+  };
+
+  if (loading) return <div className="loading">Loading storybooks...</div>;
+
+  return (
+    <div className="storybooks-container">
+      <header className="storybooks-header">
+        <h1>Storybooks</h1>
+        <button onClick={handleLogout} className="logout-btn">
+          Logout
+        </button>
+      </header>
+
+      <div className="search-section">
+        <form onSubmit={handleSearch} className="search-form">
+          <input
+            type="text"
+            placeholder="Search storybooks by title, author, or keyword..."
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+            className="search-input"
+          />
+          <button type="submit" disabled={isSearching} className="search-button">
+            {isSearching ? 'Searching...' : 'Search'}
+          </button>
+          {searchKeyword && (
+            <button
+              type="button"
+              onClick={handleClearSearch}
+              className="clear-button"
+            >
+              Clear
+            </button>
+          )}
+        </form>
+      </div>
+
+      {error && <div className="error-banner">{error}</div>}
+
+      <div className="storybooks-grid">
+        {storybooks.length > 0 ? (
+          storybooks.map(book => (
+            <div
+              key={book.id}
+              className="storybook-card"
+              onClick={() => handleViewDetails(book.id)}
+            >
+              {book.coverImageUrl && (
+                <img src={book.coverImageUrl} alt={book.title} className="book-cover" />
+              )}
+              <h3>{book.title}</h3>
+              <p className="author">by {book.authorName}</p>
+              <p className="category">{book.categoryName}</p>
+              <p className="description">{book.description}</p>
+              <div className="book-footer">
+                <span className="price">${book.price}</span>
+                <span className="created-date">
+                  {new Date(book.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+              {book.audioUrl && (
+                <a
+                  href={book.audioUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="audio-link"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Listen Now
+                </a>
+              )}
+            </div>
+          ))
+        ) : (
+          <p className="no-results">
+            {searchKeyword ? 'No storybooks found matching your search.' : 'No storybooks available'}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Storybooks;
