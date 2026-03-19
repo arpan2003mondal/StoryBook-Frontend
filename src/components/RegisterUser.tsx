@@ -83,12 +83,20 @@ const RegisterUser = () => {
 
   
 
+  const handleHome = () => {
+    navigate('/');
+  };
+
   return (
     <div className="register-container">
+      <button className="back-home-btn" onClick={handleHome} title="Back to Home">
+        ← Back to Home
+      </button>
       <div className="register-wrapper">
         <div className="register-header">
+          <div className="register-header-icon">✨</div>
           <h1>Create Account</h1>
-          <p>Join us today and get started</p>
+          <p>Join our community of storytellers</p>
         </div>
         
         <form onSubmit={handleSubmit} className="register-form">

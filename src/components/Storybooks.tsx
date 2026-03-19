@@ -108,15 +108,7 @@ const Storybooks = () => {
   return (
     <div className="storybooks-container">
       <header className="storybooks-header">
-        <h1>Storybooks</h1>
-        <div className="header-actions">
-          <button onClick={() => navigate('/cart')} className="cart-btn">
-            🛒 View Cart
-          </button>
-          <button onClick={handleLogout} className="logout-btn">
-            Logout
-          </button>
-        </div>
+     
       {successMessage && <div className="success-message">{successMessage}</div>}
       </header>
 

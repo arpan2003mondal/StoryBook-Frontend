@@ -50,12 +50,20 @@ const UserLogin = () => {
     }
   };
 
+  const handleHome = () => {
+    navigate('/');
+  };
+
   return (
     <div className="login-container">
+      <button className="back-home-btn" onClick={handleHome} title="Back to Home">
+        ← Back to Home
+      </button>
       <div className="login-wrapper">
         <div className="login-header">
-          <h1>Sign In</h1>
-          <p>Welcome back</p>
+          <div className="login-header-icon">🔐</div>
+          <h1>Welcome Back</h1>
+          <p>Sign in to your account to continue</p>
         </div>
 
         <form onSubmit={handleSubmit} className="login-form">
