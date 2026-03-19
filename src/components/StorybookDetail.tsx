@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { StorybookResponse } from '../model/StorybookResponse';
 import { StoryBookService } from '../services/StoryBookService';
+import { CartService } from '../services/CartService';
 import { AuthService } from '../services/AuthService';
 import '../styles/StorybookDetail.css';
 
@@ -11,6 +12,9 @@ const StorybookDetail = () => {
   const [storybook, setStorybook] = useState<StorybookResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [quantity, setQuantity] = useState(1);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   useEffect(() => {
     const fetchStorybook = async () => {
@@ -38,6 +42,40 @@ const StorybookDetail = () => {
 
   const handleBack = () => {
     navigate('/storybooks');
+  };
+
+  const handleAddToCart = async () => {
+    try {
+      setIsAddingToCart(true);
+      setError('');
+      
+      if (!storybook) return;
+      
+      const response = await CartService.addToCart({
+        storybookId: storybook.id,
+        quantity: quantity
+      });
+      
+      setSuccessMessage(response.message || 'Added to cart successfully!');
+      setQuantity(1);
+      
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 3000);
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        AuthService.logout();
+        navigate('/login');
+      } else {
+        setError(err.response?.data?.message || 'Failed to add to cart');
+      }
+    } finally {
+      setIsAddingToCart(false);
+    }
+  };
+
+  const handleViewCart = () => {
+    navigate('/cart');
   };
 
   if (loading) return <div className="loading">Loading storybook details...</div>;
@@ -83,13 +121,54 @@ const StorybookDetail = () => {
           </div>
 
           <div className="actions">
+            <div className="quantity-section">
+              <label htmlFor="quantity">Quantity:</label>
+              <div className="quantity-selector">
+                <button 
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  disabled={quantity <= 1}
+                  className="qty-btn"
+                >
+                  −
+                </button>
+                <input
+                  id="quantity"
+                  type="number"
+                  min="1"
+                  value={quantity}
+                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                  className="qty-input"
+                />
+                <button 
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="qty-btn"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <button
+              onClick={handleAddToCart}
+              disabled={isAddingToCart}
+              className="add-to-cart-btn"
+            >
+              {isAddingToCart ? 'Adding...' : '🛒 Add to Cart'}
+            </button>
+            
+            <button onClick={handleViewCart} className="view-cart-btn">
+              View Cart
+            </button>
+
             {storybook.audioUrl && (
               <a href={storybook.audioUrl} target="_blank" rel="noopener noreferrer" className="audio-button">
                 🎧 Listen Now
               </a>
             )}
-            <button className="add-to-cart-btn">Add to Cart</button>
           </div>
+
+          {successMessage && <div className="success-message">{successMessage}</div>}
+          {error && <div className="error-banner">{error}</div>}
         </div>
       </div>
     </div>

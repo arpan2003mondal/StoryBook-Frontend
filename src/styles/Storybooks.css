@@ -19,6 +19,27 @@
   margin: 0;
 }
 
+.header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.cart-btn {
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.cart-btn:hover {
+  background-color: #2980b9;
+}
+
 .logout-btn {
   padding: 10px 20px;
   background-color: #e74c3c;
@@ -192,20 +213,50 @@
 }
 
 .audio-link {
-  display: inline-block;
-  margin: 0 20px 20px 20px;
-  padding: 8px 16px;
+  display: block;
+  width: calc(50% - 6px);
+  padding: 8px 12px;
   background-color: #667eea;
   color: white;
   text-decoration: none;
   border-radius: 4px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
+  text-align: center;
   transition: background-color 0.3s;
 }
 
 .audio-link:hover {
- 
+  background-color: #5568d3;
+}
+
+.card-actions {
+  display: flex;
+  gap: 12px;
+  padding: 0 20px 20px 20px;
+}
+
+.add-to-cart-quick-btn {
+  flex: 1;
+  padding: 8px 12px;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 12px;
+  transition: background-color 0.3s;
+}
+
+.add-to-cart-quick-btn:hover:not(:disabled) {
+  background-color: #229954;
+}
+
+.add-to-cart-quick-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
 .no-results {
   grid-column: 1 / -1;
@@ -213,5 +264,14 @@
   padding: 40px 20px;
   color: #999;
   font-size: 16px;
-} background-color: #5568d3;
+}
+
+.success-message {
+  padding: 12px;
+  background-color: #d4edda;
+  color: #155724;
+  border-radius: 4px;
+  border: 1px solid #c3e6cb;
+  font-size: 14px;
+  font-weight: 600;
 }

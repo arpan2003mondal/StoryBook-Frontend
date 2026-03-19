@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthService } from '../services/AuthService';
+import { CartService } from '../services/CartService';
 import { StoryBookService } from '../services/StoryBookService';
 import { StorybookResponse } from '../model/StorybookResponse';
 import '../styles/Storybooks.css';
@@ -12,6 +13,8 @@ const Storybooks = () => {
   const [error, setError] = useState('');
   const [searchKeyword, setSearchKeyword] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  const [addingToCart, setAddingToCart] = useState<number | null>(null);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     fetchAllStorybooks();
@@ -68,6 +71,33 @@ const Storybooks = () => {
     navigate(`/storybooks/${id}`);
   };
 
+  const handleAddToCart = async (e: React.MouseEvent, book: StorybookResponse) => {
+    e.stopPropagation();
+    try {
+      setAddingToCart(book.id);
+      setError('');
+      
+      const response = await CartService.addToCart({
+        storybookId: book.id,
+        quantity: 1
+      });
+      
+      setSuccessMessage(`${book.title} added to cart!`);
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 2000);
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        AuthService.logout();
+        navigate('/login');
+      } else {
+        setError(err.response?.data?.message || 'Failed to add to cart');
+      }
+    } finally {
+      setAddingToCart(null);
+    }
+  };
+
   const handleLogout = () => {
     AuthService.logout();
     navigate('/login');
@@ -79,9 +109,15 @@ const Storybooks = () => {
     <div className="storybooks-container">
       <header className="storybooks-header">
         <h1>Storybooks</h1>
-        <button onClick={handleLogout} className="logout-btn">
-          Logout
-        </button>
+        <div className="header-actions">
+          <button onClick={() => navigate('/cart')} className="cart-btn">
+            🛒 View Cart
+          </button>
+          <button onClick={handleLogout} className="logout-btn">
+            Logout
+          </button>
+        </div>
+      {successMessage && <div className="success-message">{successMessage}</div>}
       </header>
 
       <div className="search-section">
@@ -131,17 +167,27 @@ const Storybooks = () => {
                   {new Date(book.createdAt).toLocaleDateString()}
                 </span>
               </div>
-              {book.audioUrl && (
-                <a
-                  href={book.audioUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="audio-link"
-                  onClick={(e) => e.stopPropagation()}
+              
+              <div className="card-actions">
+                {book.audioUrl && (
+                  <a
+                    href={book.audioUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="audio-link"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Listen Now
+                  </a>
+                )}
+                <button
+                  onClick={(e) => handleAddToCart(e, book)}
+                  disabled={addingToCart === book.id}
+                  className="add-to-cart-quick-btn"
                 >
-                  Listen Now
-                </a>
-              )}
+                  {addingToCart === book.id ? 'Adding...' : '🛒 Add to Cart'}
+                </button>
+              </div>
             </div>
           ))
         ) : (

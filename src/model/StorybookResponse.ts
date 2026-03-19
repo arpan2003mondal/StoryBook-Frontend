@@ -8,6 +8,7 @@ export interface StorybookResponse {
   categoryName: string;
   price: number;
   audioUrl: string;
+  sampleAudioUrl: string;
   coverImageUrl: string;
   createdAt: string;
 }
