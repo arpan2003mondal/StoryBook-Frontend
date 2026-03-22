@@ -4,6 +4,7 @@ import { AuthService } from '../services/AuthService';
 import { CartService } from '../services/CartService';
 import { StoryBookService } from '../services/StoryBookService';
 import { StorybookResponse } from '../model/StorybookResponse';
+import AudioPreviewModal from './AudioPreviewModal';
 import '../styles/Storybooks.css';
 
 const Storybooks = () => {
@@ -15,6 +16,8 @@ const Storybooks = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [addingToCart, setAddingToCart] = useState<number | null>(null);
   const [successMessage, setSuccessMessage] = useState('');
+  const [previewAudioUrl, setPreviewAudioUrl] = useState<string | null>(null);
+  const [previewBookTitle, setPreviewBookTitle] = useState('');
 
   useEffect(() => {
     fetchAllStorybooks();
@@ -37,7 +40,7 @@ const Storybooks = () => {
       setLoading(false);
     }
   };
-
+  
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchKeyword.trim()) {
@@ -76,12 +79,12 @@ const Storybooks = () => {
     try {
       setAddingToCart(book.id);
       setError('');
-      
+
       const response = await CartService.addToCart({
         storybookId: book.id,
         quantity: 1
       });
-      
+
       setSuccessMessage(`${book.title} added to cart!`);
       setTimeout(() => {
         setSuccessMessage('');
@@ -103,13 +106,24 @@ const Storybooks = () => {
     navigate('/login');
   };
 
+  const handleListenNow = (e: React.MouseEvent, book: StorybookResponse) => {
+    e.stopPropagation();
+    setPreviewAudioUrl(book.sampleAudioUrl || null);
+    setPreviewBookTitle(book.title);
+  };
+
+  const handleCloseAudioPreview = () => {
+    setPreviewAudioUrl(null);
+    setPreviewBookTitle('');
+  };
+
   if (loading) return <div className="loading">Loading storybooks...</div>;
 
   return (
     <div className="storybooks-container">
       <header className="storybooks-header">
-     
-      {successMessage && <div className="success-message">{successMessage}</div>}
+
+        {successMessage && <div className="success-message">{successMessage}</div>}
       </header>
 
       <div className="search-section">
@@ -159,18 +173,16 @@ const Storybooks = () => {
                   {new Date(book.createdAt).toLocaleDateString()}
                 </span>
               </div>
-              
+
               <div className="card-actions">
-                {book.audioUrl && (
-                  <a
-                    href={book.audioUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                {book.sampleAudioUrl && (
+                  <button
                     className="audio-link"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => handleListenNow(e, book)}
+                    title="Preview sample audio"
                   >
-                    Listen Now
-                  </a>
+                    🎧 Listen Now
+                  </button>
                 )}
                 <button
                   onClick={(e) => handleAddToCart(e, book)}
@@ -188,6 +200,13 @@ const Storybooks = () => {
           </p>
         )}
       </div>
+
+      <AudioPreviewModal
+        isOpen={!!previewAudioUrl}
+        audioUrl={previewAudioUrl}
+        title={previewBookTitle}
+        onClose={handleCloseAudioPreview}
+      />
     </div>
   );
 };

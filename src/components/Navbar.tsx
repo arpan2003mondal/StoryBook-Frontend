@@ -3,13 +3,14 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthService } from '../services/AuthService';
 import { UserService, UserProfile } from '../services/UserService';
 import '../styles/Navbar.css';
+import { WalletBalanceDTO } from '../model/WalletBalanceDTO';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [walletBalance, setWalletBalance] = useState(0);
+  const [walletBalance, setWalletBalance] = useState<WalletBalanceDTO | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
@@ -37,6 +38,7 @@ const Navbar = () => {
 
       try {
         const balance = await UserService.getWalletBalance();
+       
         setWalletBalance(balance);
       } catch (error) {
         console.error('Failed to fetch wallet balance:', error);
@@ -58,7 +60,7 @@ const Navbar = () => {
   };
 
   const handleLibrary = () => {
-    navigate('/library');
+    navigate('/wallet/library');
     setUserMenuOpen(false);
   };
 
@@ -140,7 +142,7 @@ const Navbar = () => {
               {/* Wallet Balance */}
               <div className="wallet-section">
                 <span className="wallet-icon">💰</span>
-                <span className="wallet-amount">${walletBalance.toFixed(2)}</span>
+                <span className="wallet-amount">${walletBalance?.balance?.toFixed(2)}</span>
               </div>
 
               {/* User Profile Dropdown */}

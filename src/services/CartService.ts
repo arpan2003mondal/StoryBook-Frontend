@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { CartResponseDTO } from '../model/CartResponseDTO';
 import { AddToCartRequest } from '../model/AddToCartRequest';
+import { OrderResponseDTO } from '../model/OrderResponseDTO';
 
 export class CartService {
   
@@ -45,6 +46,15 @@ export class CartService {
   static removeFromCart(cartItemId: number): Promise<{ message: string; cart: CartResponseDTO }> {
     return axios
       .delete(`/storybooks/cart/items/${cartItemId}`)
+      .then(response => response.data);
+  }
+
+  /**
+   * Checkout and create order from cart
+   */
+  static checkout(): Promise<{ message: string; order: OrderResponseDTO }> {
+    return axios
+      .post('/wallet/checkout')
       .then(response => response.data);
   }
 }

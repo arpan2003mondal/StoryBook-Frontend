@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CartResponseDTO } from '../model/CartResponseDTO';
+import { OrderResponseDTO } from '../model/OrderResponseDTO';
 import { CartService } from '../services/CartService';
 import { AuthService } from '../services/AuthService';
 import '../styles/Cart.css';
@@ -11,6 +12,8 @@ const Cart = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isRemoving, setIsRemoving] = useState<number | null>(null);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [checkoutSuccess, setCheckoutSuccess] = useState<OrderResponseDTO | null>(null);
 
   useEffect(() => {
     fetchCart();
@@ -58,12 +61,57 @@ const Cart = () => {
     navigate('/storybooks');
   };
 
-  const handleCheckout = () => {
-    // TODO: Implement checkout
-    alert('Checkout functionality coming soon!');
+  const handleCheckout = async () => {
+    try {
+      setIsCheckingOut(true);
+      setError('');
+      const response = await CartService.checkout();
+      setCheckoutSuccess(response.order);
+      setCart(null); // Clear cart after successful checkout
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        AuthService.logout();
+        navigate('/login');
+      } else {
+        const errorMsg = err.response?.data?.message || err.message || 'Checkout failed';
+        setError(errorMsg);
+      }
+    } finally {
+      setIsCheckingOut(false);
+    }
   };
 
   if (loading) return <div className="loading">Loading cart...</div>;
+
+  // Show success message after checkout
+  if (checkoutSuccess) {
+    return (
+      <div className="cart-container">
+        <div className="checkout-success">
+          <div className="success-icon">✓</div>
+          <h1>Order Placed Successfully!</h1>
+          <div className="success-details">
+            <p className="order-id">Order ID: <strong>#{checkoutSuccess.orderId}</strong></p>
+            <p className="order-amount">Total Amount: <strong>${typeof checkoutSuccess.totalAmount === 'number' ? checkoutSuccess.totalAmount.toFixed(2) : '0.00'}</strong></p>
+            <p className="order-items">Items: <strong>{checkoutSuccess.itemCount}</strong></p>
+            <p className="order-date">Order Date: <strong>{new Date(checkoutSuccess.createdAt).toLocaleDateString()}</strong></p>
+            <p className="order-status">Status: <strong>{checkoutSuccess.orderStatus}</strong></p>
+          </div>
+          <div className="success-message">
+            <p>Thank you for your purchase! The books have been added to your library.</p>
+          </div>
+          <div className="success-actions">
+            <button onClick={() => navigate('/storybooks')} className="continue-button">
+              Continue Shopping
+            </button>
+            <button onClick={() => navigate('/library')} className="library-button">
+              Go to My Library
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="cart-container">
@@ -131,8 +179,12 @@ const Cart = () => {
               <span>${typeof cart.totalPrice === 'number' ? cart.totalPrice.toFixed(2) : '0.00'}</span>
             </div>
 
-            <button onClick={handleCheckout} className="checkout-button">
-              Proceed to Checkout
+            <button 
+              onClick={handleCheckout} 
+              disabled={isCheckingOut || !cart || cart.cartItems.length === 0}
+              className="checkout-button"
+            >
+              {isCheckingOut ? 'Processing Checkout...' : 'Proceed to Checkout'}
             </button>
             <button onClick={handleContinueShopping} className="continue-shopping-button">
               Continue Shopping
