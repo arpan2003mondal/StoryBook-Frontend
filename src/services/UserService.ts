@@ -1,11 +1,15 @@
 import axios from 'axios';
 import { StorybookResponse } from '../model/StorybookResponse';
 import { WalletBalanceDTO } from '../model/WalletBalanceDTO';
+import { ChangePasswordRequest } from '../model/ChangePasswordRequest';
+import { ChangeUsernameRequest } from '../model/ChangeUsernameRequest';
 
 export interface UserProfile {
   id: number;
   email: string;
   name: string;
+  role?: string;
+  createdAt?: string;
   walletBalance?: number;
 }
 
@@ -53,5 +57,29 @@ export class UserService {
         
         return [];
       });
+  }
+
+  /**
+   * Change user's password
+   */
+  static changePassword(request: ChangePasswordRequest): Promise<any> {
+    return axios.post('/users/change-password', {
+      oldPassword: request.oldPassword,
+      newPassword: request.newPassword
+    }).then(response => response.data);
+  }
+
+  /**
+   * Change user's username
+   */
+  static changeUsername(request: ChangeUsernameRequest): Promise<any> {
+    return axios.post('/users/change-username', request).then(response => response.data);
+  }
+
+  /**
+   * Logout user
+   */
+  static logout(): Promise<any> {
+    return axios.post('/users/logout').then(response => response.data);
   }
 }

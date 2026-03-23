@@ -55,7 +55,7 @@ const Navbar = () => {
   };
 
   const handleProfile = () => {
-    navigate('/profile');
+    navigate('/users/profile');
     setUserMenuOpen(false);
   };
 

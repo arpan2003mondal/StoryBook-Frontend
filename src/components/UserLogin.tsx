@@ -36,14 +36,14 @@ const UserLogin = () => {
     try {
       await AuthService.login(formData.email, formData.password);
       
-      setSuccessMessage('Login successful! Redirecting...');
+      setSuccessMessage(Messages.LOGIN_SUCCESS);
       
       setTimeout(() => {
         navigate('/storybooks');
       }, 1500);
       
     } catch (error: any) {
-      const errorMsg = error.response?.data || "Login failed. Please try again.";
+      const errorMsg = error.response?.data || Messages.LOGIN_FAILED;
       setErrorMessage(errorMsg);
     } finally {
       setIsLoading(false);
@@ -56,8 +56,8 @@ const UserLogin = () => {
 
   return (
     <div className="login-container">
-      <button className="back-home-btn" onClick={handleHome} title="Back to Home">
-        ← Back to Home
+      <button className="back-home-btn" onClick={handleHome} title={Messages.BACK_TO_HOME}>
+        ← {Messages.BACK_TO_HOME}
       </button>
       <div className="login-wrapper">
         <div className="login-header">

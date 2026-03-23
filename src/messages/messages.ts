@@ -1,4 +1,5 @@
 export const Messages = {
+  // Validation Messages
   usernameRequired: 'Username is required.',
   emailRequired: 'Email is required.',
   emailInvalid: 'Please enter a valid email address.',
@@ -9,5 +10,63 @@ export const Messages = {
   INVALID_NAME: 'Name must start with a capital letter and contain at least 3 characters.',
   INVALID_EMAIL: 'Please enter a valid email address.',
   INVALID_PASSWORD: 'Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.',
-  PASSWORD_MISMATCH: 'Passwords do not match.'
+  PASSWORD_MISMATCH: 'Passwords do not match.',
+
+  // Login Messages
+  LOGIN_SUCCESS: 'Login successful! Redirecting...',
+  LOGIN_FAILED: 'Login failed. Please try again.',
+  BACK_TO_HOME: 'Back to Home',
+
+  // Change Password Messages
+  OLD_PASSWORD_REQUIRED: 'Old password is required',
+  NEW_PASSWORD_REQUIRED: 'New password is required',
+  NEW_PASSWORD_MIN_LENGTH: 'New password must be at least 6 characters',
+  CONFIRM_NEW_PASSWORD_REQUIRED: 'Please confirm your new password',
+  PASSWORDS_DO_NOT_MATCH: 'Passwords do not match',
+  CHANGE_PASSWORD_TITLE: 'Change Password',
+  CHANGE_PASSWORD_BUTTON: 'Change Password',
+  CHANGING_PASSWORD_BUTTON: 'Changing Password...',
+  PASSWORD_CHANGED_SUCCESS: 'Password changed successfully!',
+  CHANGE_PASSWORD_FAILED: 'Failed to change password. Please try again.',
+  OLD_PASSWORD_LABEL: 'Old Password *',
+  NEW_PASSWORD_LABEL: 'New Password *',
+  CONFIRM_NEW_PASSWORD_LABEL: 'Confirm New Password *',
+  OLD_PASSWORD_PLACEHOLDER: 'Enter your current password',
+  NEW_PASSWORD_PLACEHOLDER: 'Enter your new password (min. 6 characters)',
+  CONFIRM_PASSWORD_PLACEHOLDER: 'Confirm your new password',
+
+  // Change Username Messages
+  NEW_USERNAME_REQUIRED: 'New username is required',
+  USERNAME_CANNOT_BE_EMPTY: 'Username cannot be empty or contain only whitespace',
+  USERNAME_MUST_BE_DIFFERENT: 'New username must be different from current username',
+  CHANGE_USERNAME_TITLE: 'Change Username',
+  CHANGE_USERNAME_BUTTON: 'Change Username',
+  CHANGING_USERNAME_BUTTON: 'Changing Username...',
+  USERNAME_CHANGED_SUCCESS: 'Username changed successfully!',
+  CHANGE_USERNAME_FAILED: 'Failed to change username. Please try again.',
+  CURRENT_USERNAME_LABEL: 'Current Username',
+  NEW_USERNAME_LABEL: 'New Username *',
+  NEW_USERNAME_PLACEHOLDER: 'Enter your new username',
+  CHANGE_YOUR_USERNAME: 'Change your username',
+  FAILED_TO_LOAD_USERNAME: 'Failed to load current username',
+  CANCEL_BUTTON: 'Cancel',
+  LOADING: 'Loading...',
+
+  // User Profile Messages
+  PROFILE_LOADING: 'Loading profile...',
+  PROFILE_LOAD_FAILED: 'Failed to load profile',
+  PROFILE_NO_DATA: 'No profile data available',
+  PROFILE_TITLE: 'My Profile',
+  PROFILE_USERNAME_LABEL: 'Username',
+  PROFILE_EMAIL_LABEL: 'Email',
+  PROFILE_ROLE_LABEL: 'Role',
+  PROFILE_MEMBER_SINCE_LABEL: 'Member Since',
+  PROFILE_MEMBER_SINCE_TEXT: 'Joined on',
+  PROFILE_SECURITY_LABEL: 'Security',
+  PROFILE_CHANGE_PASSWORD_BUTTON: 'Change Password',
+  PROFILE_CHANGE_PASSWORD_TITLE: 'Change your password',
+  PROFILE_CHANGE_USERNAME_TITLE: 'Change your username',
+  PROFILE_DEFAULT_AVATAR: 'U',
+  PROFILE_RETRY_BUTTON: 'Retry',
+  PROFILE_NO_DATA_VALUE: 'N/A'
 };
