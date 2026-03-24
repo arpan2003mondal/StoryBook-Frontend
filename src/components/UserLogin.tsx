@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthService } from '../services/AuthService';
 import { LoginRequest } from '../model/LoginRequest';
+import { ToastService } from '../services/ToastService';
 import '../styles/Login.css';
 import { Validator } from '../validators/Validation';
 import { Messages } from '../messages/messages';
@@ -14,8 +15,6 @@ const UserLogin = () => {
   });
 
   const [emailError, setEmailError] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,22 +28,17 @@ const UserLogin = () => {
   };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setErrorMessage("");
-    setSuccessMessage("");
     setIsLoading(true);
 
     try {
       await AuthService.login(formData.email, formData.password);
-      
-      setSuccessMessage(Messages.LOGIN_SUCCESS);
-      
+      ToastService.showSuccess(Messages.LOGIN_SUCCESS);
       setTimeout(() => {
         navigate('/storybooks');
       }, 1500);
-      
     } catch (error: any) {
-      const errorMsg = error.response?.data || Messages.LOGIN_FAILED;
-      setErrorMessage(errorMsg);
+      const errorMsg = error.response?.data.message || Messages.LOGIN_FAILED;
+      ToastService.showError(errorMsg);
     } finally {
       setIsLoading(false);
     }
@@ -96,16 +90,13 @@ const UserLogin = () => {
             />
           </div>
 
-          {successMessage && <div className="success-message">{successMessage}</div>}
-          {errorMessage && <div className="error-banner">{errorMessage}</div>}
-
           <button type="submit" disabled={isLoading || !!emailError} className="submit-button">
             {isLoading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 
         <div className="register-link">
-          Don't have an account? <a href="/register">Sign up</a>
+          Don't have an account? <a href="/users/register">Sign up</a>
         </div>
       </div>
     </div>

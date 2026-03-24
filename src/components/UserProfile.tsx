@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserService, UserProfile } from '../services/UserService';
+import { UserService } from '../services/UserService';
+import { UserProfile } from '../model/UserProfile';
 import { Messages } from '../messages/messages';
+import { ToastService } from '../services/ToastService';
 import '../styles/UserProfile.css';
 
 const UserProfileComponent = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState('');
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const [showChangeUsernameModal, setShowChangeUsernameModal] = useState(false);
 
@@ -22,7 +23,7 @@ const UserProfileComponent = () => {
       } catch (error: any) {
         console.error('Error loading profile:', error);
         const errorMsg = error.response?.data?.message || error.response?.data || Messages.PROFILE_LOAD_FAILED;
-        setErrorMessage(errorMsg);
+        ToastService.showError(errorMsg);
       } finally {
         setIsLoading(false);
       }
@@ -59,19 +60,6 @@ const UserProfileComponent = () => {
       <div className="user-profile-container">
         <div className="loading">
           <p>{Messages.PROFILE_LOADING}</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (errorMessage) {
-    return (
-      <div className="user-profile-container">
-        <div className="error-state">
-          <p className="error-message">{errorMessage}</p>
-          <button className="retry-btn" onClick={() => window.location.reload()}>
-            {Messages.PROFILE_RETRY_BUTTON}
-          </button>
         </div>
       </div>
     );

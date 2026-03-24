@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserService, UserProfile } from '../services/UserService';
+import { UserService } from '../services/UserService';
+import { UserProfile } from '../model/UserProfile';
 import { ChangeUsernameRequest } from '../model/ChangeUsernameRequest';
 import { Messages } from '../messages/messages';
 import { Validator } from '../validators/Validation';
+import { ToastService } from '../services/ToastService';
 import '../styles/ChangeUsername.css';
 
 const ChangeUsername = () => {
@@ -11,8 +13,6 @@ const ChangeUsername = () => {
   const [currentUsername, setCurrentUsername] = useState('');
   const [newUsername, setNewUsername] = useState('');
   const [usernameError, setUsernameError] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [isFormValid, setIsFormValid] = useState(false);
@@ -26,7 +26,7 @@ const ChangeUsername = () => {
         setCurrentUsername(profile.name);
       } catch (error: any) {
         console.error('Error loading profile:', error);
-        setErrorMessage(Messages.FAILED_TO_LOAD_USERNAME);
+        ToastService.showError(Messages.FAILED_TO_LOAD_USERNAME);
       } finally {
         setIsLoadingProfile(false);
       }
@@ -39,7 +39,6 @@ const ChangeUsername = () => {
     const { value } = e.target;
     setNewUsername(value);
     setIsTouched(true);
-    setErrorMessage('');
 
     // Real-time validation
     validateUsername(value);
@@ -70,8 +69,6 @@ const ChangeUsername = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setErrorMessage('');
-    setSuccessMessage('');
 
     if (!isFormValid) {
       return;
@@ -85,7 +82,7 @@ const ChangeUsername = () => {
       };
 
       const response = await UserService.changeUsername(request);
-      setSuccessMessage(response.message || Messages.USERNAME_CHANGED_SUCCESS);
+      ToastService.showSuccess(response.message || Messages.USERNAME_CHANGED_SUCCESS);
       setCurrentUsername(newUsername);
       setNewUsername('');
       setIsTouched(false);
@@ -96,7 +93,7 @@ const ChangeUsername = () => {
       }, 2000);
     } catch (error: any) {
       const errorMsg = error.response?.data?.message || error.response?.data || Messages.CHANGE_USERNAME_FAILED;
-      setErrorMessage(errorMsg);
+      ToastService.showError(errorMsg);
     } finally {
       setIsLoading(false);
     }
@@ -114,9 +111,6 @@ const ChangeUsername = () => {
     <div className="change-username-container">
       <div className="change-username-form">
         <h2>{Messages.CHANGE_USERNAME_TITLE}</h2>
-
-        {successMessage && <div className="success-message">{successMessage}</div>}
-        {errorMessage && <div className="error-message">{errorMessage}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">

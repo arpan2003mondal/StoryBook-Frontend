@@ -3,21 +3,10 @@ import { StorybookResponse } from '../model/StorybookResponse';
 import { WalletBalanceDTO } from '../model/WalletBalanceDTO';
 import { ChangePasswordRequest } from '../model/ChangePasswordRequest';
 import { ChangeUsernameRequest } from '../model/ChangeUsernameRequest';
+import { UserProfile } from '../model/UserProfile';
 
-export interface UserProfile {
-  id: number;
-  email: string;
-  name: string;
-  role?: string;
-  createdAt?: string;
-  walletBalance?: number;
-}
 
-export interface UserLibraryItem {
-  id: number;
-  storybook: StorybookResponse;
-  purchasedAt: string;
-}
+
 
 export class UserService {
   static getProfile(): Promise<UserProfile> {
@@ -33,17 +22,15 @@ export class UserService {
    */
   static getUserLibrary(): Promise<StorybookResponse[]> {
     return axios
-      .get('/wallet/library')
+      .get('/library')
       .then(response => {
         const data = response.data;
-        console.log('UserService getUserLibrary raw response:', data);
-        
+
         // Handle backend response structure: { message, items, total }
         if (data.items && Array.isArray(data.items)) {
-          console.log('Unwrapping data.items from backend response');
           return data.items;
         }
-        
+
         // Fallback for other response structures
         if (Array.isArray(data)) {
           return data;
@@ -54,7 +41,7 @@ export class UserService {
         if (data.data && Array.isArray(data.data)) {
           return data.data;
         }
-        
+
         return [];
       });
   }
@@ -83,3 +70,5 @@ export class UserService {
     return axios.post('/users/logout').then(response => response.data);
   }
 }
+
+export type { UserProfile };

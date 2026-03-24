@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { UserRegisterRequestState } from '../model/UserRegisterRequest';
 import { FormErrorState } from '../model/FormErrorState';
+import { ToastService } from '../services/ToastService';
 
 
 const RegisterUser = () => {
@@ -27,9 +28,6 @@ const RegisterUser = () => {
     confirmPasswordError: ''
   });
 
-  
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
   const [isValid, setIsValid] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,20 +39,18 @@ const RegisterUser = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setErrorMessage("");
-    setSuccessMessage("");
 
     try {
       const response = await axios.post('/users/register', formData);
-      setSuccessMessage(response.data);
+      ToastService.showSuccess(response.data);
       setTimeout(() => {
-        navigate('/login');
+        navigate('/users/login');
       }, 2000);
     } catch (error: any) {
-      setErrorMessage(error.response?.data?.message || "Registration failed. Please try again.");
+      const errorMsg = error.response?.data?.message || Messages.REGISTRATION_FAILED;
+      ToastService.showError(errorMsg);
     }
-  }
-
+  };
 
   const validateField = (name: string, value: any) : void => {
     let errors = formErrors;
@@ -80,8 +76,6 @@ const RegisterUser = () => {
   Object.values(errors).every(error => error === '')  );
   }
 
-
-  
 
   const handleHome = () => {
     navigate('/');
@@ -137,7 +131,7 @@ const RegisterUser = () => {
               value={formData.password}
               onChange={handleChange}
               className={`form-input ${formErrors.passwordError ? 'error-input' : ''}`}
-              placeholder="Minimum 6 characters"
+              placeholder="Enter your password"
             />
             {formErrors.passwordError && <span className="error-message">{formErrors.passwordError}</span>}
           </div>
@@ -156,16 +150,13 @@ const RegisterUser = () => {
             {formErrors.confirmPasswordError && <span className="error-message">{formErrors.confirmPasswordError}</span>}
           </div>
 
-          {successMessage && <div className="success-message">{successMessage}</div>}
-          {errorMessage && <div className="error-banner">{errorMessage}</div>}
-
           <button type="submit" disabled={!isValid} className="submit-button">
             Create Account
           </button>
         </form>
 
         <div className="login-link">
-          Already have an account? <a href="/login">Sign in</a>
+          Already have an account? <a href="/users/login">Sign in</a>
         </div>
       </div>
     </div>

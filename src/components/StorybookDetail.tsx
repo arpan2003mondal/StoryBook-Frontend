@@ -4,6 +4,8 @@ import { StorybookResponse } from '../model/StorybookResponse';
 import { StoryBookService } from '../services/StoryBookService';
 import { CartService } from '../services/CartService';
 import { AuthService } from '../services/AuthService';
+import { ToastService } from '../services/ToastService';
+import { Messages } from '../messages/messages';
 import '../styles/StorybookDetail.css';
 
 const StorybookDetail = () => {
@@ -11,8 +13,6 @@ const StorybookDetail = () => {
   const navigate = useNavigate();
   const [storybook, setStorybook] = useState<StorybookResponse | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
 
@@ -20,7 +20,7 @@ const StorybookDetail = () => {
     const fetchStorybook = async () => {
       try {
         if (!id) {
-          setError('Invalid storybook ID');
+          ToastService.showError(Messages.INVALID_STORYBOOK_ID);
           return;
         }
         const data = await StoryBookService.getStorybookById(Number(id));
@@ -28,9 +28,9 @@ const StorybookDetail = () => {
       } catch (err: any) {
         if (err.response?.status === 401) {
           AuthService.logout();
-          navigate('/login');
+          navigate('/users/login');
         } else {
-          setError(err.response?.data?.message || 'Failed to fetch storybook details');
+          ToastService.showError(err.response?.data?.message || Messages.FAILED_TO_FETCH_STORYBOOK);
         }
       } finally {
         setLoading(false);
@@ -47,7 +47,6 @@ const StorybookDetail = () => {
   const handleAddToCart = async () => {
     try {
       setIsAddingToCart(true);
-      setError('');
       
       if (!storybook) return;
       
@@ -56,18 +55,18 @@ const StorybookDetail = () => {
         quantity: quantity
       });
       
-      setSuccessMessage(response.message || 'Added to cart successfully!');
+      if (response.success) {
+        ToastService.showSuccess(response.message);
+      } else {
+        ToastService.showError(response.message);
+      }
       setQuantity(1);
-      
-      setTimeout(() => {
-        setSuccessMessage('');
-      }, 3000);
     } catch (err: any) {
       if (err.response?.status === 401) {
         AuthService.logout();
-        navigate('/login');
+        navigate('/users/login');
       } else {
-        setError(err.response?.data?.message || 'Failed to add to cart');
+        ToastService.showError(err.response?.data?.message || Messages.FAILED_TO_ADD_TO_CART_FALLBACK);
       }
     } finally {
       setIsAddingToCart(false);
@@ -78,25 +77,18 @@ const StorybookDetail = () => {
     navigate('/cart');
   };
 
-  if (loading) return <div className="loading">Loading storybook details...</div>;
-
-  if (error) return (
-    <div className="detail-container">
-      <button onClick={handleBack} className="back-button">← Back</button>
-      <div className="error-banner">{error}</div>
-    </div>
-  );
+  if (loading) return <div className="loading">{Messages.LOADING_STORYBOOK_DETAILS}</div>;
 
   if (!storybook) return (
     <div className="detail-container">
-      <button onClick={handleBack} className="back-button">← Back</button>
-      <div className="error-banner">Storybook not found</div>
+      <button onClick={handleBack} className="back-button">← {Messages.BACK_BUTTON}</button>
+      <div className="error-banner">{Messages.STORYBOOK_NOT_FOUND}</div>
     </div>
   );
 
   return (
     <div className="detail-container">
-      <button onClick={handleBack} className="back-button">← Back</button>
+      <button onClick={handleBack} className="back-button">← {Messages.BACK_BUTTON}</button>
       
       <div className="detail-content">
         <div className="detail-cover">
@@ -109,20 +101,20 @@ const StorybookDetail = () => {
           <h1>{storybook.title}</h1>
           
           <div className="meta-info">
-            <p><strong>Author:</strong> {storybook.authorName}</p>
-            <p><strong>Category:</strong> {storybook.categoryName}</p>
-            <p><strong>Price:</strong> <span className="price">${storybook.price}</span></p>
-            <p><strong>Published:</strong> {new Date(storybook.createdAt).toLocaleDateString()}</p>
+            <p><strong>{Messages.AUTHOR_LABEL}:</strong> {storybook.authorName}</p>
+            <p><strong>{Messages.CATEGORY_LABEL}:</strong> {storybook.categoryName}</p>
+            <p><strong>{Messages.PRICE_LABEL}:</strong> <span className="price">${storybook.price}</span></p>
+            <p><strong>{Messages.PUBLISHED_LABEL}:</strong> {new Date(storybook.createdAt).toLocaleDateString()}</p>
           </div>
 
           <div className="description-section">
-            <h2>Description</h2>
+            <h2>{Messages.DESCRIPTION_LABEL}</h2>
             <p>{storybook.description}</p>
           </div>
 
           <div className="actions">
             <div className="quantity-section">
-              <label htmlFor="quantity">Quantity:</label>
+              <label htmlFor="quantity">{Messages.QUANTITY_LABEL}:</label>
               <div className="quantity-selector">
                 <button 
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -153,22 +145,19 @@ const StorybookDetail = () => {
               disabled={isAddingToCart}
               className="add-to-cart-btn"
             >
-              {isAddingToCart ? 'Adding...' : '🛒 Add to Cart'}
+              {isAddingToCart ? Messages.ADDING_TO_CART : '🛒 ' + Messages.ADD_TO_CART_BUTTON}
             </button>
             
             <button onClick={handleViewCart} className="view-cart-btn">
-              View Cart
+              {Messages.VIEW_CART}
             </button>
 
             {storybook.audioUrl && (
               <a href={storybook.audioUrl} target="_blank" rel="noopener noreferrer" className="audio-button">
-                🎧 Listen Now
+                🎧 {Messages.LISTEN_NOW}
               </a>
             )}
           </div>
-
-          {successMessage && <div className="success-message">{successMessage}</div>}
-          {error && <div className="error-banner">{error}</div>}
         </div>
       </div>
     </div>
@@ -176,3 +165,4 @@ const StorybookDetail = () => {
 };
 
 export default StorybookDetail;
+

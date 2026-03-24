@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { UserService } from '../services/UserService';
 import { StorybookResponse } from '../model/StorybookResponse';
 import { AuthService } from '../services/AuthService';
+import { ToastService } from '../services/ToastService';
+import { Messages } from '../messages/messages';
 import AudioPlayer from './AudioPlayer';
 import '../styles/Library.css';
 
@@ -11,7 +13,6 @@ const Library = () => {
   const location = useLocation();
   const [library, setLibrary] = useState<StorybookResponse[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [filter, setFilter] = useState('all');
 
   useEffect(() => {
@@ -23,14 +24,14 @@ const Library = () => {
       setLoading(true);
       const data = await UserService.getUserLibrary();
       setLibrary(data);
-      setError('');
+      
     } catch (err: any) {
       if (err.response?.status === 401) {
         AuthService.logout();
-        navigate('/login');
+        navigate('/users/login');
       } else {
-        const errorMsg = err.response?.data?.message || err.message || 'Failed to fetch library';
-        setError(errorMsg);
+        const errorMsg = err.response?.data?.message || err.message || Messages.PROFILE_LOAD_FAILED;
+        ToastService.showError(errorMsg);
       }
     } finally {
       setLoading(false);
@@ -41,33 +42,35 @@ const Library = () => {
     navigate(`/storybooks/${storybookId}`);
   };
 
-  if (loading) return <div className="loading">Loading your library...</div>;
+  if (loading) return <div className="loading">{Messages.LIBRARY_LOADING}</div>;
 
   return (
     <div className="library-container">
       <header className="library-header">
-        <h1>My Library</h1>
+        <h1>
+          <i className="fas fa-book-open"></i> {Messages.MY_LIBRARY}
+        </h1>
         <button onClick={() => navigate('/storybooks')} className="shop-button">
-          Continue Shopping
+          <i className="fas fa-shopping-bag"></i> {Messages.CONTINUE_SHOPPING}
         </button>
       </header>
-
-      {error && <div className="error-banner">{error}</div>}
 
       {library && library.length > 0 ? (
         <div className="library-content">
           <div className="library-info">
             <p>Total Books: <strong>{library.length}</strong></p>
             <div className="filter-section">
-              <label htmlFor="filter">Filter: </label>
+              <label htmlFor="filter">
+                <i className="fas fa-filter"></i> {Messages.FILTER}:
+              </label>
               <select 
                 id="filter"
                 value={filter} 
                 onChange={(e) => setFilter(e.target.value)}
                 className="filter-dropdown"
               >
-                <option value="all">All Books</option>
-                <option value="recent">Recently Purchased</option>
+                <option value="all">{Messages.ALL_BOOKS}</option>
+                <option value="recent">{Messages.RECENTLY_PURCHASED}</option>
               </select>
             </div>
           </div>
@@ -84,7 +87,7 @@ const Library = () => {
                     />
                   ) : (
                     <div className="item-cover-placeholder">
-                      <span>No Image</span>
+                      <span>{Messages.NO_IMAGE}</span>
                     </div>
                   )}
                   <div className="item-overlay">
@@ -92,7 +95,7 @@ const Library = () => {
                       className="read-button"
                       onClick={() => handleViewStorybook(item.id)}
                     >
-                      📖 Read
+                      <i className="fas fa-book-reader"></i> Read
                     </button>
                   </div>
                 </div>
@@ -108,7 +111,7 @@ const Library = () => {
                       onClick={() => handleViewStorybook(item.id)}
                       title="Read this story"
                     >
-                      📖 Read
+                      <i className="fas fa-book-reader"></i> Read
                     </button>
                   </div>
 
@@ -120,12 +123,14 @@ const Library = () => {
         </div>
       ) : (
         <div className="empty-library">
-          <div className="empty-icon">📚</div>
-          <h2>Your library is empty</h2>
-          <p>You haven't purchased any storybooks yet.</p>
+          <div className="empty-icon">
+            <i className="fas fa-bookmark"></i>
+          </div>
+          <h2>{Messages.MY_LIBRARY}</h2>
+          <p>{Messages.EMPTY_CART_MESSAGE}</p>
           <p>Start exploring and add some stories to your collection!</p>
           <button onClick={() => navigate('/storybooks')} className="shop-button">
-            Start Shopping Now
+            <i className="fas fa-shopping-bag"></i> {Messages.START_SHOPPING}
           </button>
         </div>
       )}

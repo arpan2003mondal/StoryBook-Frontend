@@ -7,13 +7,19 @@
 .audio-player {
   background: #ffffff;
   border: 1px solid #e2e0f0;
-  border-radius: 10px;
-  padding: 14px 16px;
-  margin-top: 12px;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-top: 14px;
   color: #2d2d4e;
-  box-shadow: 0 2px 8px rgba(88, 70, 180, 0.08);
-  font-size: 11px;
+  box-shadow: 0 2px 12px rgba(88, 70, 180, 0.1);
+  font-size: 12px;
   font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.audio-player:hover {
+  border-color: #d8d3f0;
+  box-shadow: 0 4px 16px rgba(88, 70, 180, 0.15);
 }
 
 /* ── Error ── */
@@ -46,8 +52,8 @@
 .player-controls {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 /* ── Play / Pause button — green to match "Add to Cart" / "Listen Now" ── */
@@ -55,30 +61,36 @@
   background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   border: none;
   color: white;
-  width: 34px;
-  height: 34px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
-  box-shadow: 0 3px 8px rgba(32, 201, 151, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  box-shadow: 0 4px 12px rgba(32, 201, 151, 0.4);
 }
 
 .play-pause-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 5px 14px rgba(32, 201, 151, 0.45);
+  transform: scale(1.12);
+  box-shadow: 0 6px 16px rgba(32, 201, 151, 0.5);
 }
 
 .play-pause-btn:active {
-  transform: scale(0.96);
+  transform: scale(0.95);
 }
 
 .play-pause-btn.playing {
   background: linear-gradient(135deg, #20c997 0%, #17b78a 100%);
+}
+
+.play-pause-btn i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ── Seek / progress ── */
@@ -100,18 +112,20 @@
 
 .progress-bar {
   flex: 1;
-  height: 5px;
+  height: 6px;
   -webkit-appearance: none;
   appearance: none;
-  background: #e8e5f5;
+  background: linear-gradient(to right, #5a46c8 0%, #7c65e0 100%);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   border-radius: 3px;
   outline: none;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: height 0.2s;
 }
 
 .progress-bar:hover {
-  background: #d8d3f0;
+  height: 7px;
 }
 
 .progress-bar::-webkit-slider-thumb {
@@ -144,27 +158,36 @@
 /* ── Settings row ── */
 .player-settings {
   display: flex;
-  gap: 12px;
+  gap: 20px;
   flex-wrap: wrap;
   align-items: center;
-  border-top: 1px solid #eeeaf8;
-  padding-top: 10px;
-  margin-top: 2px;
+  border-top: 1px solid #ede9f5;
+  padding-top: 14px;
+  margin-top: 8px;
 }
 
 .speed-control,
 .volume-control {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 11px;
+  gap: 8px;
+  font-size: 12px;
 }
 
 .speed-control label,
 .volume-control label {
-  font-weight: 700;
-  color: #6c63b0;
+  font-weight: 600;
+  color: #5a46c8;
   letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.speed-control label i,
+.volume-control label i {
+  font-size: 14px;
+  color: #28a745;
 }
 
 /* ── Speed select — matches nav pill style ── */
@@ -190,25 +213,32 @@
 .speed-select:hover,
 .speed-select:focus {
   background-color: #eeebfc;
-  border-color: #9a8fd8;
+  border-color: #b8b0e8;
+  box-shadow: 0 0 0 3px rgba(88, 70, 180, 0.1);
 }
 
 .speed-select option {
   background: white;
   color: #2d2d4e;
   border-radius: 0;
+  padding: 6px 8px;
 }
 
 /* ── Volume slider ── */
 .volume-slider {
   width: 60px;
-  height: 4px;
+  height: 5px;
   -webkit-appearance: none;
   appearance: none;
   background: #e8e5f5;
   border-radius: 2px;
   outline: none;
   cursor: pointer;
+  transition: height 0.2s;
+}
+
+.volume-slider:hover {
+  height: 6px;
 }
 
 .volume-slider::-webkit-slider-thumb {

@@ -12,10 +12,22 @@ export const Messages = {
   INVALID_PASSWORD: 'Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.',
   PASSWORD_MISMATCH: 'Passwords do not match.',
 
+  // Registration Messages
+  REGISTRATION_SUCCESS: 'Registration successful! Redirecting to login...',
+  REGISTRATION_FAILED: 'Registration failed. Please try again.',
+  BACK_TO_LOGIN: 'Back to Login',
+
   // Login Messages
   LOGIN_SUCCESS: 'Login successful! Redirecting...',
   LOGIN_FAILED: 'Login failed. Please try again.',
   BACK_TO_HOME: 'Back to Home',
+
+  // Profile Messages
+  PROFILE_LOAD_SUCCESS: 'Profile loaded successfully.',
+  PROFILE_LOAD_FAILED: 'Failed to load profile. Please try again.',
+  PROFILE_UPDATE_SUCCESS: 'Profile updated successfully.',
+  PROFILE_UPDATE_FAILED: 'Failed to update profile. Please try again.',
+  WALLET_BALANCE_LOAD_FAILED: 'Failed to fetch wallet balance. Please try again.',
 
   // Change Password Messages
   OLD_PASSWORD_REQUIRED: 'Old password is required',
@@ -54,7 +66,7 @@ export const Messages = {
 
   // User Profile Messages
   PROFILE_LOADING: 'Loading profile...',
-  PROFILE_LOAD_FAILED: 'Failed to load profile',
+
   PROFILE_NO_DATA: 'No profile data available',
   PROFILE_TITLE: 'My Profile',
   PROFILE_USERNAME_LABEL: 'Username',
@@ -68,5 +80,122 @@ export const Messages = {
   PROFILE_CHANGE_USERNAME_TITLE: 'Change your username',
   PROFILE_DEFAULT_AVATAR: 'U',
   PROFILE_RETRY_BUTTON: 'Retry',
-  PROFILE_NO_DATA_VALUE: 'N/A'
-};
+  PROFILE_NO_DATA_VALUE: 'N/A',
+
+  // Cart Messages
+  INVALID_REQUEST: 'Invalid request. Please check your input.',
+  SESSION_EXPIRED: 'Your session has expired. Please log in again.',
+  PERMISSION_DENIED: 'You do not have permission to perform this action.',
+  ITEM_NOT_FOUND: 'Item not found in cart.',
+  ITEM_ALREADY_IN_CART: 'This item is already in your cart.',
+  INVALID_CART_ITEM: 'Invalid cart item. Please try again.',
+  SERVER_ERROR: 'Server error occurred. Please try again later.',
+  SERVICE_UNAVAILABLE: 'Service temporarily unavailable. Please try again later.',
+  GENERAL_ERROR: 'An error occurred while processing your request.',
+  INVALID_ITEM_QUANTITY: 'Invalid item or quantity. Please select a valid item.',
+  ITEM_ADDED_TO_CART: 'Item added to cart successfully!',
+  CART_LOADED: 'Cart loaded successfully.',
+  ITEM_REMOVED_FROM_CART: 'Item removed from cart successfully!',
+  EMPTY_CART: 'Your cart is empty. Please add items before checking out.',
+  CHECKOUT_SUCCESS: 'Order placed successfully! Thank you for your purchase.',
+  INSUFFICIENT_BALANCE: 'Insufficient wallet balance. Please add funds to your wallet.',
+  ADD_TO_CART_FAILED: 'Failed to add item to cart.',
+  GET_CART_FAILED: 'Failed to load cart.',
+  REMOVE_FROM_CART_FAILED: 'Failed to remove item from cart.',
+  CHECKOUT_FAILED: 'Checkout failed. Please try again.',
+
+  // Cart UI Messages
+  CART_TITLE: 'Shopping Cart',
+  CART_EMPTY_MESSAGE: 'Your cart is empty',
+  CONTINUE_SHOPPING: 'Continue Shopping',
+  PROCEED_TO_CHECKOUT: 'Proceed to Checkout',
+  REMOVE_ITEM: 'Remove',
+  QUANTITY_LABEL: 'Quantity',
+  TOTAL_PRICE_LABEL: 'Total Price',
+  CART_TOTAL_LABEL: 'Cart Total',
+  LOADING_CART: 'Loading cart...',
+  ORDER_PLACED_SUCCESS: 'Your order has been placed successfully!',
+  ORDER_NUMBER_LABEL: 'Order Number',
+  VIEW_ORDERS: 'View Orders',
+
+  // Error Messages
+  INVALID_EMAIL_FORMAT: 'Please enter a valid email address.',
+  UNEXPECTED_ERROR: 'An unexpected error occurred.',
+
+  // Cart Item Messages
+  UNKNOWN_BOOK: 'Unknown Book',
+  UNKNOWN_AUTHOR: 'Unknown Author',
+  UNKNOWN_CATEGORY: 'Unknown Category',
+
+  // Order Success Messages
+  ORDER_ID_LABEL: 'Order ID',
+  ORDER_AMOUNT_LABEL: 'Total Amount',
+  ORDER_ITEMS_LABEL: 'Items',
+  ORDER_DATE_LABEL: 'Order Date',
+  ORDER_STATUS_LABEL: 'Status',
+  THANK_YOU_MESSAGE: 'Thank you for your purchase! The books have been added to your library.',
+  GO_TO_LIBRARY: 'Go to My Library',
+  START_SHOPPING: 'Start Shopping',
+
+  // Empty Cart Messages
+  CART_EMPTY: 'Your cart is empty',
+  EMPTY_CART_MESSAGE: 'Start adding some stories to your cart!',
+
+  // Storybooks Page Messages
+  LOADING_STORYBOOKS: 'Loading storybooks...',
+  SEARCHING: 'Searching...',
+  SEARCH_BUTTON: 'Search',
+  CLEAR_BUTTON: 'Clear',
+  SEARCH_PLACEHOLDER: 'Search storybooks by title, author, or keyword...',
+  NO_STORYBOOKS_FOUND: 'No storybooks found matching your search.',
+  NO_STORYBOOKS_AVAILABLE: 'No storybooks available',
+  ADDING_TO_CART: 'Adding...',
+  ADD_TO_CART_BUTTON: 'Add to Cart',
+  LISTEN_NOW: 'Listen Now',
+
+  // Storybook Detail Page Messages
+  LOADING_STORYBOOK_DETAILS: 'Loading storybook details...',
+  INVALID_STORYBOOK_ID: 'Invalid storybook ID',
+  STORYBOOK_NOT_FOUND: 'Storybook not found',
+  BACK_BUTTON: 'Back',
+  VIEW_CART: 'View Cart',
+  FAILED_TO_FETCH_STORYBOOK: 'Failed to fetch storybook details',
+  AUTHOR_LABEL: 'Author',
+  CATEGORY_LABEL: 'Category',
+  PRICE_LABEL: 'Price',
+  PUBLISHED_LABEL: 'Published',
+  DESCRIPTION_LABEL: 'Description',
+
+  // Cart Summary and Labels
+  CART_ITEMS_LABEL: 'Cart Items',
+  ORDER_SUMMARY_LABEL: 'Order Summary',
+  SUBTOTAL_LABEL: 'Subtotal',
+  SHIPPING_LABEL: 'Shipping',
+  SHIPPING_FREE: 'Free',
+  TAX_LABEL: 'Tax',
+  TAX_AT_CHECKOUT: 'Calculated at checkout',
+  TOTAL_LABEL: 'Total',
+  PROCESSING_CHECKOUT: 'Processing Checkout...',
+  REMOVING_ITEM: 'Removing...',
+
+  // Error/Fallback Messages
+  FAILED_TO_FETCH_STORYBOOKS: 'Failed to fetch storybooks',
+  FAILED_TO_SEARCH_STORYBOOKS: 'Failed to search storybooks',
+  FAILED_TO_ADD_TO_CART_FALLBACK: 'Failed to add to cart',
+
+  // Navbar Messages
+  SIGN_IN: 'Sign In',
+  SIGN_UP: 'Sign Up',
+  CART_NAV: 'Cart',
+  LIBRARY_NAV: 'Library',
+  MY_PROFILE: 'My Profile',
+  MY_LIBRARY: 'My Library',
+  LOGOUT: 'Logout',
+
+  // Library Messages
+  LIBRARY_LOADING: 'Loading your library...',
+  FILTER: 'Filter',
+  ALL_BOOKS: 'All Books',
+  RECENTLY_PURCHASED: 'Recently Purchased',
+  NO_IMAGE: 'No Image'
+}

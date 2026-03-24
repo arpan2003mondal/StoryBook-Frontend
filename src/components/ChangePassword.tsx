@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { UserService } from '../services/UserService';
 import { ChangePasswordRequest } from '../model/ChangePasswordRequest';
 import { Messages } from '../messages/messages';
+import { ToastService } from '../services/ToastService';
 import '../styles/ChangePassword.css';
 
 const ChangePassword = () => {
@@ -19,8 +20,6 @@ const ChangePassword = () => {
     confirmNewPassword: ''
   });
 
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [isTouched, setIsTouched] = useState({
@@ -38,7 +37,6 @@ const ChangePassword = () => {
 
     // Mark field as touched
     setIsTouched(prevState => ({ ...prevState, [name]: true }));
-    setErrorMessage('');
 
     // Real-time validation
     validateField(name, value);
@@ -86,8 +84,6 @@ const ChangePassword = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setErrorMessage('');
-    setSuccessMessage('');
 
     if (!isFormValid) {
       return;
@@ -102,7 +98,7 @@ const ChangePassword = () => {
       };
 
       const response = await UserService.changePassword(request);
-      setSuccessMessage(response.message || Messages.PASSWORD_CHANGED_SUCCESS);
+      ToastService.showSuccess(response.message || Messages.PASSWORD_CHANGED_SUCCESS);
 
       // Reset form
       setFormData({
@@ -127,7 +123,7 @@ const ChangePassword = () => {
       }, 2000);
     } catch (error: any) {
       const errorMsg = error.response?.data?.message || error.response?.data || Messages.CHANGE_PASSWORD_FAILED;
-      setErrorMessage(errorMsg);
+      ToastService.showError(errorMsg);
     } finally {
       setIsLoading(false);
     }
@@ -141,9 +137,6 @@ const ChangePassword = () => {
     <div className="change-password-container">
       <div className="change-password-form">
         <h2>{Messages.CHANGE_PASSWORD_TITLE}</h2>
-
-        {successMessage && <div className="success-message">{successMessage}</div>}
-        {errorMessage && <div className="error-message">{errorMessage}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">

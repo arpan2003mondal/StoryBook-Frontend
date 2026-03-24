@@ -14,6 +14,7 @@ import { AuthService } from './services/AuthService';
 import ChangePassword from './components/ChangePassword';
 import ChangeUsername from './components/ChangeUsername';
 import UserProfileComponent from './components/UserProfile';
+import Toast from './components/Toast';
 
 function App() {
   useEffect(() => {
@@ -23,17 +24,18 @@ function App() {
 
   return (
     <BrowserRouter>
+      <Toast />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/register" element={<RegisterUser />} />
-        <Route path="/login" element={<UserLogin />} />
+        <Route path="/users/register" element={<RegisterUser />} />
+        <Route path="/users/login" element={<UserLogin />} />
         <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/change-username" element={<ChangeUsername />} />
         <Route path="/storybooks" element={<ProtectedRoute element={<Storybooks />} />} />
         <Route path="/storybooks/:id" element={<ProtectedRoute element={<StorybookDetail />} />} />
         <Route path="/cart" element={<ProtectedRoute element={<Cart />} />} />
-        <Route path="/wallet/library" element={<ProtectedRoute element={<Library />} />} />
+        <Route path="/library" element={<ProtectedRoute element={<Library />} />} />
         <Route path="/users/profile" element={<UserProfileComponent />} />
       </Routes>
     </BrowserRouter>

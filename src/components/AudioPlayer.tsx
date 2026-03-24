@@ -119,7 +119,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, title }) => {
           onClick={togglePlayPause}
           title={isPlaying ? 'Pause' : 'Play'}
         >
-          {isPlaying ? '⏸️' : '▶️'}
+          <i className={`fas ${isPlaying ? 'fa-pause' : 'fa-play'}`}></i>
         </button>
 
         <div className="progress-container">
@@ -139,7 +139,9 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, title }) => {
 
       <div className="player-settings">
         <div className="speed-control">
-          <label htmlFor="speed-select">⚡ Speed:</label>
+          <label htmlFor="speed-select">
+            <i className="fas fa-tachometer-alt"></i> Speed:
+          </label>
           <select
             id="speed-select"
             value={playbackSpeed}
@@ -156,7 +158,9 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, title }) => {
         </div>
 
         <div className="volume-control">
-          <label htmlFor="volume-slider">🔊 Vol:</label>
+          <label htmlFor="volume-slider">
+            <i className="fas fa-volume-up"></i> Vol:
+          </label>
           <input
             id="volume-slider"
             type="range"

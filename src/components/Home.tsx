@@ -6,11 +6,11 @@ const Home: FC = () => {
   const navigate = useNavigate();
 
   const goToRegister = () => {
-    navigate('/register');
+    navigate('/users/register');
   };
 
   const goToLogin = () => {
-    navigate('/login');
+    navigate('/users/login');
   };
 
   return (
@@ -28,7 +28,7 @@ const Home: FC = () => {
           </button>
         </div>
 
-        <div className="home-features">
+        {/* <div className="home-features">
           <div className="feature">
             <h3>📖 Read Stories</h3>
             <p>Browse through a collection of amazing stories</p>
@@ -41,7 +41,7 @@ const Home: FC = () => {
             <h3>👥 Connect</h3>
             <p>Join a community of storytellers</p>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
