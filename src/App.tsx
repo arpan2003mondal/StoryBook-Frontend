@@ -30,13 +30,13 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/users/register" element={<RegisterUser />} />
         <Route path="/users/login" element={<UserLogin />} />
-        <Route path="/change-password" element={<ChangePassword />} />
-        <Route path="/change-username" element={<ChangeUsername />} />
+        <Route path="/users/change-password" element={<ProtectedRoute element={<ChangePassword />} />} />
+        <Route path="/users/change-username" element={<ProtectedRoute element={<ChangeUsername />} />} />
         <Route path="/storybooks" element={<ProtectedRoute element={<Storybooks />} />} />
         <Route path="/storybooks/:id" element={<ProtectedRoute element={<StorybookDetail />} />} />
         <Route path="/cart" element={<ProtectedRoute element={<Cart />} />} />
         <Route path="/library" element={<ProtectedRoute element={<Library />} />} />
-        <Route path="/users/profile" element={<UserProfileComponent />} />
+        <Route path="/users/profile" element={<ProtectedRoute element={<UserProfileComponent />} />} />
       </Routes>
     </BrowserRouter>
   );

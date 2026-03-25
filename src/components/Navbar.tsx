@@ -27,8 +27,10 @@ const Navbar = () => {
     location.pathname === '/';
 
   useEffect(() => {
-    checkAuthentication();
-  }, [location]);
+    if (!hideNavbar) {
+      checkAuthentication();
+    }
+  }, [location, hideNavbar]);
 
   // Subscribe to cart updates
   useEffect(() => {
@@ -59,7 +61,8 @@ const Navbar = () => {
         const balance = await UserService.getWalletBalance();
         setWalletBalance(balance);
       } catch (error) {
-        ToastService.showError(Messages.WALLET_BALANCE_LOAD_FAILED);
+        // Silently handle wallet balance load errors
+        // User can see balance on profile/cart pages if needed
       }
 
       // Fetch cart and subscribe to updates

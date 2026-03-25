@@ -4,6 +4,7 @@ import { UserService } from '../services/UserService';
 import { ChangePasswordRequest } from '../model/ChangePasswordRequest';
 import { Messages } from '../messages/messages';
 import { ToastService } from '../services/ToastService';
+import { Validator } from '../validators/Validation';
 import '../styles/ChangePassword.css';
 
 const ChangePassword = () => {
@@ -56,10 +57,10 @@ const ChangePassword = () => {
     // Validate new password
     if (!updatedFormData.newPassword || updatedFormData.newPassword.trim() === '') {
       newErrors.newPassword = Messages.NEW_PASSWORD_REQUIRED;
-    } else if (updatedFormData.newPassword.length < 6) {
-      newErrors.newPassword = Messages.NEW_PASSWORD_MIN_LENGTH;
+    } else if (!Validator.validatePassword(updatedFormData.newPassword)) {
+      newErrors.newPassword = Messages.INVALID_PASSWORD;
     } else if (updatedFormData.oldPassword && updatedFormData.newPassword === updatedFormData.oldPassword) {
-      newErrors.newPassword = 'New password cannot be the same as old password';
+      newErrors.newPassword = Messages.NEW_PASSWORD_SAME_AS_OLD;
     } else {
       newErrors.newPassword = '';
     }
@@ -117,9 +118,9 @@ const ChangePassword = () => {
         try {
           await UserService.logout();
         } catch (error) {
-          console.log('Logout called');
+          // Logout error handled silently
         }
-        navigate('/login');
+        navigate('/users/login');
       }, 2000);
     } catch (error: any) {
       const errorMsg = error.response?.data?.message || error.response?.data || Messages.CHANGE_PASSWORD_FAILED;
@@ -160,7 +161,7 @@ const ChangePassword = () => {
                   disabled={isLoading}
                   aria-label={showOldPassword ? 'Hide password' : 'Show password'}
                 >
-                  {showOldPassword ? '👁️' : '👁️‍🗨️'}
+                  <i className={`fas ${showOldPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
                 </button>
               )}
             </div>
@@ -192,7 +193,7 @@ const ChangePassword = () => {
                   disabled={isLoading}
                   aria-label={showNewPassword ? 'Hide password' : 'Show password'}
                 >
-                  {showNewPassword ? '👁️' : '👁️‍🗨️'}
+                  <i className={`fas ${showNewPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
                 </button>
               )}
             </div>
@@ -203,11 +204,11 @@ const ChangePassword = () => {
             )}
             {formData.newPassword && !errors.newPassword && isTouched.newPassword && (
               <span className="field-success" role="status">
-                ✓ Valid password
+                ✓ {Messages.VALID_PASSWORD}
               </span>
             )}
             <span className="validation-hint">
-              Minimum 6 characters and different from old password
+              {Messages.PASSWORD_VALIDATION_HINT}
             </span>
           </div>
 
@@ -232,7 +233,7 @@ const ChangePassword = () => {
                   disabled={isLoading}
                   aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                 >
-                  {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
+                  <i className={`fas ${showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
                 </button>
               )}
             </div>
@@ -243,7 +244,7 @@ const ChangePassword = () => {
             )}
             {formData.confirmNewPassword && !errors.confirmNewPassword && isTouched.confirmNewPassword && (
               <span className="field-success" role="status">
-                ✓ Passwords match
+                ✓ {Messages.PASSWORDS_MATCH}
               </span>
             )}
           </div>

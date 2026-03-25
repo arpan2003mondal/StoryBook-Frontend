@@ -29,6 +29,8 @@ const RegisterUser = () => {
   });
 
   const [isValid, setIsValid] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -124,29 +126,53 @@ const RegisterUser = () => {
 
           <div className="form-group">
             <label htmlFor="password" className="form-label">Password</label>
-            <input
-              id="password"
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className={`form-input ${formErrors.passwordError ? 'error-input' : ''}`}
-              placeholder="Enter your password"
-            />
+            <div className="password-input-wrapper">
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className={`form-input ${formErrors.passwordError ? 'error-input' : ''}`}
+                placeholder="Enter your password"
+              />
+              {formData.password && (
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  <i className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                </button>
+              )}
+            </div>
             {formErrors.passwordError && <span className="error-message">{formErrors.passwordError}</span>}
           </div>
 
           <div className="form-group">
             <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
-            <input
-              id="confirmPassword"
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              className={`form-input ${formErrors.confirmPasswordError ? 'error-input' : ''}`}
-              placeholder="Confirm your password"
-            />
+            <div className="password-input-wrapper">
+              <input
+                id="confirmPassword"
+                type={showConfirmPassword ? 'text' : 'password'}
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className={`form-input ${formErrors.confirmPasswordError ? 'error-input' : ''}`}
+                placeholder="Confirm your password"
+              />
+              {formData.confirmPassword && (
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                >
+                  <i className={`fas ${showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                </button>
+              )}
+            </div>
             {formErrors.confirmPasswordError && <span className="error-message">{formErrors.confirmPasswordError}</span>}
           </div>
 

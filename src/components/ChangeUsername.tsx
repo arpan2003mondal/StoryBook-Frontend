@@ -25,7 +25,6 @@ const ChangeUsername = () => {
         const profile: UserProfile = await UserService.getProfile();
         setCurrentUsername(profile.name);
       } catch (error: any) {
-        console.error('Error loading profile:', error);
         ToastService.showError(Messages.FAILED_TO_LOAD_USERNAME);
       } finally {
         setIsLoadingProfile(false);
@@ -145,7 +144,7 @@ const ChangeUsername = () => {
             )}
             {newUsername && !usernameError && isTouched && (
               <span className="field-success" role="status">
-                ✓ Valid username
+                ✓ {Messages.VALID_USERNAME}
               </span>
             )}
             <span className="validation-hint">

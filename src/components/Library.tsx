@@ -105,15 +105,7 @@ const Library = () => {
                   <p className="author">{item.authorName}</p>
                   <p className="category">{item.categoryName}</p>
 
-                  <div className="item-actions">
-                    <button 
-                      className="action-button read-action"
-                      onClick={() => handleViewStorybook(item.id)}
-                      title="Read this story"
-                    >
-                      <i className="fas fa-book-reader"></i> Read
-                    </button>
-                  </div>
+                  
 
                   <AudioPlayer audioUrl={item.audioUrl} title={item.title} />
                 </div>

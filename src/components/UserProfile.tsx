@@ -21,7 +21,7 @@ const UserProfileComponent = () => {
         const userData: UserProfile = await UserService.getProfile();
         setProfile(userData);
       } catch (error: any) {
-        console.error('Error loading profile:', error);
+     
         const errorMsg = error.response?.data?.message || error.response?.data || Messages.PROFILE_LOAD_FAILED;
         ToastService.showError(errorMsg);
       } finally {
@@ -48,11 +48,11 @@ const UserProfileComponent = () => {
   };
 
   const handleChangePassword = () => {
-    navigate('/change-password');
+    navigate('/users/change-password');
   };
 
   const handleChangeUsername = () => {
-    navigate('/change-username');
+    navigate('/users/change-username');
   };
 
   if (isLoading) {

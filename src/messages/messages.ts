@@ -46,11 +46,16 @@ export const Messages = {
   OLD_PASSWORD_PLACEHOLDER: 'Enter your current password',
   NEW_PASSWORD_PLACEHOLDER: 'Enter your new password (min. 6 characters)',
   CONFIRM_PASSWORD_PLACEHOLDER: 'Confirm your new password',
+  VALID_PASSWORD: 'Valid password',
+  PASSWORDS_MATCH: 'Passwords match',
+  NEW_PASSWORD_SAME_AS_OLD: 'New password cannot be the same as old password',
+  PASSWORD_VALIDATION_HINT: 'Must be 8+ characters with uppercase, lowercase, number, and special character',
 
   // Change Username Messages
   NEW_USERNAME_REQUIRED: 'New username is required',
   USERNAME_CANNOT_BE_EMPTY: 'Username cannot be empty or contain only whitespace',
   USERNAME_MUST_BE_DIFFERENT: 'New username must be different from current username',
+  VALID_USERNAME: 'Valid username',
   CHANGE_USERNAME_TITLE: 'Change Username',
   CHANGE_USERNAME_BUTTON: 'Change Username',
   CHANGING_USERNAME_BUTTON: 'Changing Username...',
