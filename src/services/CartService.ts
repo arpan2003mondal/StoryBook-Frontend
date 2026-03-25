@@ -218,7 +218,7 @@ export class CartService {
         };
       }
 
-      const response = await axios.post('/storybooks/wallet/checkout');
+      const response = await axios.post('/wallet/checkout');
 
       // Clear cart after successful checkout
       this.currentCart = null;

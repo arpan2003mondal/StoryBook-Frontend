@@ -133,9 +133,7 @@ const Cart = () => {
     <div className="cart-container">
       <header className="cart-header">
         <h1>{Messages.CART_TITLE}</h1>
-        <button onClick={() => navigate('/storybooks')} className="back-button">
-          ← {Messages.CONTINUE_SHOPPING}
-        </button>
+       
       </header>
 
       {cart && cart.cartItems && cart.cartItems.length > 0 ? (
