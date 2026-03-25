@@ -13,7 +13,6 @@ const StorybookDetail = () => {
   const navigate = useNavigate();
   const [storybook, setStorybook] = useState<StorybookResponse | null>(null);
   const [loading, setLoading] = useState(true);
-  const [quantity, setQuantity] = useState(1);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   useEffect(() => {
@@ -52,7 +51,7 @@ const StorybookDetail = () => {
       
       const response = await CartService.addToCart({
         storybookId: storybook.id,
-        quantity: quantity
+        quantity: 1
       });
       
       if (response.success) {
@@ -60,7 +59,6 @@ const StorybookDetail = () => {
       } else {
         ToastService.showError(response.message);
       }
-      setQuantity(1);
     } catch (err: any) {
       if (err.response?.status === 401) {
         AuthService.logout();
@@ -71,10 +69,6 @@ const StorybookDetail = () => {
     } finally {
       setIsAddingToCart(false);
     }
-  };
-
-  const handleViewCart = () => {
-    navigate('/cart');
   };
 
   if (loading) return <div className="loading">{Messages.LOADING_STORYBOOK_DETAILS}</div>;
@@ -113,50 +107,14 @@ const StorybookDetail = () => {
           </div>
 
           <div className="actions">
-            <div className="quantity-section">
-              <label htmlFor="quantity">{Messages.QUANTITY_LABEL}:</label>
-              <div className="quantity-selector">
-                <button 
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  disabled={quantity <= 1}
-                  className="qty-btn"
-                >
-                  −
-                </button>
-                <input
-                  id="quantity"
-                  type="number"
-                  min="1"
-                  value={quantity}
-                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                  className="qty-input"
-                />
-                <button 
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="qty-btn"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-
             <button
               onClick={handleAddToCart}
               disabled={isAddingToCart}
               className="add-to-cart-btn"
             >
-              {isAddingToCart ? Messages.ADDING_TO_CART : '🛒 ' + Messages.ADD_TO_CART_BUTTON}
+              <i className="fas fa-cart-shopping"></i>
+              <span>{isAddingToCart ? Messages.ADDING_TO_CART : Messages.ADD_TO_CART_BUTTON}</span>
             </button>
-            
-            <button onClick={handleViewCart} className="view-cart-btn">
-              {Messages.VIEW_CART}
-            </button>
-
-            {storybook.audioUrl && (
-              <a href={storybook.audioUrl} target="_blank" rel="noopener noreferrer" className="audio-button">
-                🎧 {Messages.LISTEN_NOW}
-              </a>
-            )}
           </div>
         </div>
       </div>

@@ -114,14 +114,14 @@ const UserProfileComponent = () => {
           </div>
 
           {/* Role Section */}
-          {profile.role && (
+          {/* {profile.role && (
             <div className="profile-section">
               <div className="section-label">{Messages.PROFILE_ROLE_LABEL}</div>
               <div className="section-content">
                 <span className="section-value role-badge">{profile.role}</span>
               </div>
             </div>
-          )}
+          )} */}
 
           {/* Join Date Section */}
           <div className="profile-section">

@@ -210,10 +210,10 @@ const Navbar = () => {
                       <i className="fas fa-user"></i>
                       <span>{Messages.MY_PROFILE}</span>
                     </button>
-                    <button className="dropdown-item" onClick={handleLibrary}>
-                      <i className="fas fa-books"></i>
+                    {/* <button className="dropdown-item" onClick={handleLibrary}>
+                      <i className="fas fa-solid fa-book"></i>
                       <span>{Messages.MY_LIBRARY}</span>
-                    </button>
+                    </button> */}
                     <div className="dropdown-divider"></div>
                     <button className="dropdown-item logout-item" onClick={handleLogout}>
                       <i className="fas fa-sign-out-alt"></i>

@@ -168,12 +168,12 @@ const Storybooks = () => {
               <h3>{book.title}</h3>
               <p className="author">by {book.authorName}</p>
               <p className="category">{book.categoryName}</p>
-              <p className="description">{book.description}</p>
+              {/* <p className="description">{book.description}</p> */}
               <div className="book-footer">
                 <span className="price">${book.price}</span>
-                <span className="created-date">
+                {/* <span className="created-date">
                   {new Date(book.createdAt).toLocaleDateString()}
-                </span>
+                </span> */}
               </div>
 
               <div className="card-actions">
@@ -183,7 +183,7 @@ const Storybooks = () => {
                     onClick={(e) => handleListenNow(e, book)}
                     title="Preview sample audio"
                   >
-                    🎧 Listen Now
+                    <i className="fas fa-volume-high"></i> Preview Story
                   </button>
                 )}
                 <button
@@ -191,7 +191,7 @@ const Storybooks = () => {
                   disabled={addingToCart === book.id}
                   className="add-to-cart-quick-btn"
                 >
-                  {addingToCart === book.id ? Messages.ADDING_TO_CART : '🛒 ' + Messages.ADD_TO_CART_BUTTON}
+                  <i className="fas fa-cart-shopping"></i> {addingToCart === book.id ? Messages.ADDING_TO_CART : Messages.ADD_TO_CART_BUTTON}
                 </button>
               </div>
             </div>

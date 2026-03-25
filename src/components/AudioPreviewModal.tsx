@@ -72,8 +72,8 @@ const AudioPreviewModal: React.FC<AudioPreviewModalProps> = ({
     <div className="audio-preview-overlay" onClick={onClose}>
       <div className="audio-preview-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>🎧 Sample Audio Preview</h2>
-          <button className="modal-close-btn" onClick={onClose}>✕</button>
+          <h2><i className="fas fa-volume-high"></i> Sample Audio Preview</h2>
+          <button className="modal-close-btn" onClick={onClose}><i className="fas fa-times"></i></button>
         </div>
 
         <div className="modal-content">
@@ -97,7 +97,7 @@ const AudioPreviewModal: React.FC<AudioPreviewModalProps> = ({
                 onClick={togglePlayPause}
                 title={isPlaying ? 'Pause' : 'Play'}
               >
-                {isPlaying ? '⏸️' : '▶️'}
+                {isPlaying ? <i className="fas fa-pause"></i> : <i className="fas fa-play"></i>}
               </button>
 
               <div className="progress-container">
@@ -116,7 +116,7 @@ const AudioPreviewModal: React.FC<AudioPreviewModalProps> = ({
             </div>
 
             <div className="volume-control">
-              <label htmlFor="preview-volume">🔊</label>
+              <label htmlFor="preview-volume"><i className="fas fa-volume-high"></i></label>
               <input
                 id="preview-volume"
                 type="range"
@@ -131,7 +131,7 @@ const AudioPreviewModal: React.FC<AudioPreviewModalProps> = ({
             </div>
           </div>
 
-          <p className="preview-note">📌 This is a sample preview. Purchase to access the full audio!</p>
+          <p className="preview-note"><i className="fas fa-info-circle"></i> This is a sample preview. Purchase to access the full audio!</p>
         </div>
 
         <div className="modal-footer">

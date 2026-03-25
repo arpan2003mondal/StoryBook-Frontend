@@ -38,9 +38,9 @@ const Library = () => {
     }
   };
 
-  const handleViewStorybook = (storybookId: number | string) => {
-    navigate(`/storybooks/${storybookId}`);
-  };
+  // const handleViewStorybook = (storybookId: number | string) => {
+  //   navigate(`/storybooks/${storybookId}`);
+  // };
 
   if (loading) return <div className="loading">{Messages.LIBRARY_LOADING}</div>;
 
@@ -90,14 +90,14 @@ const Library = () => {
                       <span>{Messages.NO_IMAGE}</span>
                     </div>
                   )}
-                  <div className="item-overlay">
+                  {/* <div className="item-overlay">
                     <button 
                       className="read-button"
                       onClick={() => handleViewStorybook(item.id)}
                     >
                       <i className="fas fa-book-reader"></i> Read
                     </button>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="item-info">
