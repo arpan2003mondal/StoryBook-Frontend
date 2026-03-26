@@ -4,11 +4,11 @@ import { AuthService } from '../services/AuthService';
 import { CartService } from '../services/CartService';
 import { StoryBookService } from '../services/StoryBookService';
 import { ReviewService } from '../services/ReviewService';
+import { WishlistService } from '../services/WishlistService';
 import { StorybookResponse } from '../model/StorybookResponse';
 import { AverageRatingResponse } from '../model/ReviewSubmitRequest';
 import { ToastService } from '../services/ToastService';
 import { Messages } from '../messages/messages';
-import AudioPreviewModal from './AudioPreviewModal';
 import '../styles/Storybooks.css';
 
 const Storybooks = () => {
@@ -19,9 +19,8 @@ const Storybooks = () => {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [addingToCart, setAddingToCart] = useState<number | null>(null);
-  const [previewAudioUrl, setPreviewAudioUrl] = useState<string | null>(null);
-  const [previewBookTitle, setPreviewBookTitle] = useState('');
   const [ratings, setRatings] = useState<{ [key: number]: AverageRatingResponse }>({});
+  const [addingToWishlist, setAddingToWishlist] = useState<number | null>(null);
 
   useEffect(() => {
     fetchAllStorybooks();
@@ -50,14 +49,20 @@ const Storybooks = () => {
 
   const fetchRatingsForBooks = async (books: StorybookResponse[]) => {
     const ratingsMap: { [key: number]: AverageRatingResponse } = {};
-    for (const book of books) {
-      try {
-        const rating = await ReviewService.getAverageRating(book.id);
-        ratingsMap[book.id] = rating;
-      } catch (err) {
-        console.error(`Failed to fetch rating for book ${book.id}`);
-      }
-    }
+    
+    // Fetch all ratings in parallel instead of sequentially
+    const ratingPromises = books.map(book =>
+      ReviewService.getAverageRating(book.id)
+        .then(rating => {
+          ratingsMap[book.id] = rating;
+        })
+        .catch(err => {
+          ToastService.showError(err.response?.data?.message || Messages.FAILED_TO_FETCH_REVIEWS);
+        })
+    );
+    
+    // Wait for all rating fetches to complete
+    await Promise.all(ratingPromises);
     setRatings(ratingsMap);
   };
   
@@ -124,21 +129,40 @@ const Storybooks = () => {
     }
   };
 
+  const handleAddToWishlist = async (e: React.MouseEvent, book: StorybookResponse) => {
+    e.stopPropagation();
+    
+    try {
+      setAddingToWishlist(book.id);
+      const response = await WishlistService.addToWishlist({ storyBookId: book.id });
+      
+      // If response has success property, use it; otherwise assume success if no error
+      const isSuccess = response.success !== false;
+      
+      if (isSuccess) {
+        ToastService.showSuccess(response.message || Messages.ADD_TO_WISHLIST_SUCCESS);
+      } else {
+        ToastService.showError(response.message || Messages.ADD_TO_WISHLIST_FAILED);
+      }
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        AuthService.logout();
+        navigate('/users/login');
+      } else {
+        const errorMsg = err.response?.data?.message || Messages.ADD_TO_WISHLIST_FAILED;
+        ToastService.showError(errorMsg);
+      }
+    } finally {
+      setAddingToWishlist(null);
+    }
+  };
+
   const handleLogout = () => {
     AuthService.logout();
     navigate('/users/login');
   };
 
-  const handleListenNow = (e: React.MouseEvent, book: StorybookResponse) => {
-    e.stopPropagation();
-    setPreviewAudioUrl(book.sampleAudioUrl || null);
-    setPreviewBookTitle(book.title);
-  };
 
-  const handleCloseAudioPreview = () => {
-    setPreviewAudioUrl(null);
-    setPreviewBookTitle('');
-  };
 
   if (loading) return <div className="loading">{Messages.LOADING_STORYBOOKS}</div>;
 
@@ -184,7 +208,17 @@ const Storybooks = () => {
               onClick={() => handleViewDetails(book.id)}
             >
               {book.coverImageUrl && (
-                <img src={book.coverImageUrl} alt={book.title} className="book-cover" />
+                <div className="book-cover-wrapper">
+                  <img src={book.coverImageUrl} alt={book.title} className="book-cover" />
+                  <button
+                    className="wishlist-btn"
+                    onClick={(e) => handleAddToWishlist(e, book)}
+                    disabled={addingToWishlist === book.id}
+                    title="Add to wishlist"
+                  >
+                    <i className="fa-solid fa-heart" style={{ color: 'rgb(177, 151, 252)' }}></i>
+                  </button>
+                </div>
               )}
               <h3>{book.title}</h3>
               <p className="author">by {book.authorName}</p>
@@ -212,15 +246,6 @@ const Storybooks = () => {
               </div>
 
               <div className="card-actions">
-                {book.sampleAudioUrl && (
-                  <button
-                    className="audio-link"
-                    onClick={(e) => handleListenNow(e, book)}
-                    title="Preview sample audio"
-                  >
-                    <i className="fas fa-volume-high"></i> Preview Story
-                  </button>
-                )}
                 <button
                   onClick={(e) => handleAddToCart(e, book)}
                   disabled={addingToCart === book.id}
@@ -238,12 +263,6 @@ const Storybooks = () => {
         )}
       </div>
 
-      <AudioPreviewModal
-        isOpen={!!previewAudioUrl}
-        audioUrl={previewAudioUrl}
-        title={previewBookTitle}
-        onClose={handleCloseAudioPreview}
-      />
     </div>
   );
 };

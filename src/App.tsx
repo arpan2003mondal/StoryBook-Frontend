@@ -10,6 +10,7 @@ import Storybooks from './components/Storybooks';
 import StorybookDetail from './components/StorybookDetail';
 import Cart from './components/Cart';
 import Library from './components/Library';
+import MyWishlist from './components/MyWishlist';
 import ProtectedRoute from './components/ProtectedRoute';
 import { setupAxiosInterceptors } from './utils/axiosConfig';
 import ChangePassword from './components/ChangePassword';
@@ -45,6 +46,7 @@ function App() {
             <Route path="/storybooks/:id" element={<ProtectedRoute element={<StorybookDetail />} />} />
             <Route path="/cart" element={<ProtectedRoute element={<Cart />} />} />
             <Route path="/library" element={<ProtectedRoute element={<Library />} />} />
+            <Route path="/wishlist" element={<ProtectedRoute element={<MyWishlist />} />} />
             <Route path="/users/profile" element={<ProtectedRoute element={<UserProfileComponent />} />} />
           </Routes>
         </main>

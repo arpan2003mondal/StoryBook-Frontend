@@ -3,9 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { StorybookResponse } from '../model/StorybookResponse';
 import { StoryBookService } from '../services/StoryBookService';
 import { CartService } from '../services/CartService';
+import { WishlistService } from '../services/WishlistService';
 import { AuthService } from '../services/AuthService';
 import { ToastService } from '../services/ToastService';
 import { Messages } from '../messages/messages';
+import AudioPreviewModal from './AudioPreviewModal';
 import ReviewModal from './ReviewModal';
 import ReviewsList from './ReviewsList';
 import '../styles/StorybookDetail.css';
@@ -16,9 +18,12 @@ const StorybookDetail = () => {
   const [storybook, setStorybook] = useState<StorybookResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState<boolean>(false);
   const [showReviewsList, setShowReviewsList] = useState<boolean>(false);
   const [userIdForReview, setUserIdForReview] = useState<number>(0);
+  const [previewAudioUrl, setPreviewAudioUrl] = useState<string | null>(null);
+  const [previewBookTitle, setPreviewBookTitle] = useState('');
 
   useEffect(() => {
     const fetchStorybook = async () => {
@@ -83,6 +88,47 @@ const StorybookDetail = () => {
     }
   };
 
+  const handleAddToWishlist = async () => {
+    try {
+      setIsAddingToWishlist(true);
+      
+      if (!storybook) return;
+      
+      const response = await WishlistService.addToWishlist({ storyBookId: storybook.id });
+      
+      // If response has success property, use it; otherwise assume success if no error
+      const isSuccess = response.success !== false;
+      
+      if (isSuccess) {
+        ToastService.showSuccess(response.message || Messages.ADD_TO_WISHLIST_SUCCESS);
+      } else {
+        ToastService.showError(response.message || Messages.ADD_TO_WISHLIST_FAILED);
+      }
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        AuthService.logout();
+        navigate('/users/login');
+      } else {
+        const errorMsg = err.response?.data?.message || Messages.ADD_TO_WISHLIST_FAILED;
+        ToastService.showError(errorMsg);
+      }
+    } finally {
+      setIsAddingToWishlist(false);
+    }
+  };
+
+  const handleListenNow = () => {
+    if (storybook?.sampleAudioUrl) {
+      setPreviewAudioUrl(storybook.sampleAudioUrl);
+      setPreviewBookTitle(storybook.title);
+    }
+  };
+
+  const handleCloseAudioPreview = () => {
+    setPreviewAudioUrl(null);
+    setPreviewBookTitle('');
+  };
+
   if (loading) return <div className="loading">{Messages.LOADING_STORYBOOK_DETAILS}</div>;
 
   if (!storybook) return (
@@ -99,7 +145,17 @@ const StorybookDetail = () => {
       <div className="detail-content">
         <div className="detail-cover">
           {storybook.coverImageUrl && (
-            <img src={storybook.coverImageUrl} alt={storybook.title} />
+            <>
+              <img src={storybook.coverImageUrl} alt={storybook.title} />
+              <button
+                className="wishlist-btn-detail"
+                onClick={handleAddToWishlist}
+                disabled={isAddingToWishlist}
+                title="Add to wishlist"
+              >
+                <i className="fa-solid fa-heart" style={{ color: 'rgb(177, 151, 252)' }}></i>
+              </button>
+            </>
           )}
         </div>
 
@@ -119,6 +175,15 @@ const StorybookDetail = () => {
           </div>
 
           <div className="actions">
+            {storybook.sampleAudioUrl && (
+              <button
+                onClick={handleListenNow}
+                className="listen-sample-btn"
+              >
+                <i className="fas fa-volume-high"></i>
+                <span>{Messages.LISTEN_NOW}</span>
+              </button>
+            )}
             <button
               onClick={handleAddToCart}
               disabled={isAddingToCart}
@@ -158,6 +223,13 @@ const StorybookDetail = () => {
             storyBookId={storybook.id}
             isOpen={showReviewsList}
             onClose={() => setShowReviewsList(false)}
+          />
+
+          <AudioPreviewModal
+            isOpen={!!previewAudioUrl}
+            audioUrl={previewAudioUrl}
+            title={previewBookTitle}
+            onClose={handleCloseAudioPreview}
           />
         </div>
       </div>

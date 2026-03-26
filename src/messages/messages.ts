@@ -250,4 +250,17 @@ export const Messages = {
   FAILED_TO_FETCH_REVIEWS: 'Failed to fetch reviews',
   SUBMIT_BUTTON: 'Submit Review',
   SUBMITTING_BUTTON: 'Submitting...',
+
+  // Wishlist Messages
+  WISHLIST_TITLE: 'My Wishlist',
+  WISHLIST_EMPTY: 'Your wishlist is empty',
+  EMPTY_WISHLIST_MESSAGE: 'Start adding stories to your wishlist!',
+  ADD_TO_WISHLIST_SUCCESS: 'Added to wishlist successfully!',
+  ADD_TO_WISHLIST_FAILED: 'Failed to add to wishlist',
+  ITEM_ALREADY_IN_WISHLIST: 'This item is already in your wishlist.',
+  REMOVE_FROM_WISHLIST_SUCCESS: 'Removed from wishlist successfully!',
+  REMOVE_FROM_WISHLIST_FAILED: 'Failed to remove from wishlist',
+  LOADING_WISHLIST: 'Loading wishlist...',
+  REMOVE_BUTTON: 'Remove',
+  FAILED_TO_LOAD_WISHLIST: 'Failed to load wishlist',
 };

@@ -156,11 +156,51 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.book-cover {
+.book-cover-wrapper {
+  position: relative;
   width: 100%;
   height: 200px;
+  overflow: hidden;
+}
+
+.book-cover {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   background-color: #f0f0f0;
+}
+
+.wishlist-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.wishlist-btn:hover:not(:disabled) {
+  background: white;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.wishlist-btn.in-wishlist i {
+  color: #ff4757;
+}
+
+.wishlist-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .storybook-card h3 {

@@ -111,6 +111,11 @@ const Navbar = () => {
     setUserMenuOpen(false);
   };
 
+  const handleWishlist = () => {
+    navigate('/wishlist');
+    setUserMenuOpen(false);
+  };
+
   const handleDashboard = () => {
     navigate('/storybooks');
     setMobileMenuOpen(false);
@@ -214,6 +219,10 @@ const Navbar = () => {
                     <button className="dropdown-item" onClick={handleProfile}>
                       <i className="fas fa-user"></i>
                       <span>{Messages.MY_PROFILE}</span>
+                    </button>
+                    <button className="dropdown-item" onClick={handleWishlist}>
+                      <i className="fas fa-heart"></i>
+                      <span>{Messages.WISHLIST_TITLE}</span>
                     </button>
                     {/* <button className="dropdown-item" onClick={handleLibrary}>
                       <i className="fas fa-solid fa-book"></i>
