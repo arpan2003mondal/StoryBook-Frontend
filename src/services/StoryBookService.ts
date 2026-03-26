@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosInstance from '../utils/axiosConfig';
 import { StorybookResponse } from '../model/StorybookResponse';
 
 export class StoryBookService {
@@ -7,7 +7,7 @@ export class StoryBookService {
    * Get all storybooks
    */
   static getAllStorybooks(): Promise<StorybookResponse[]> {
-    return axios
+    return axiosInstance
       .get('/storybooks')
       .then(response => response.data);
   }
@@ -16,7 +16,7 @@ export class StoryBookService {
    * Search storybooks by keyword
    */
   static searchStorybooks(keyword: string): Promise<StorybookResponse[]> {
-    return axios
+    return axiosInstance
       .get('/storybooks/search', {
         params: { keyword }
       })
@@ -27,7 +27,7 @@ export class StoryBookService {
    * Get storybook by ID
    */
   static getStorybookById(id: number): Promise<StorybookResponse> {
-    return axios
+    return axiosInstance
       .get(`/storybooks/${id}`)
       .then(response => response.data);
   }

@@ -31,6 +31,7 @@ const RegisterUser = () => {
   const [isValid, setIsValid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -41,20 +42,23 @@ const RegisterUser = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       const response = await axios.post('/users/register', formData);
       ToastService.showSuccess(response.data);
+      // Navigate to verify email with registration data
       setTimeout(() => {
-        navigate('/users/login');
-      }, 2000);
+        navigate('/users/verify-email', { state: { registrationData: formData } });
+      }, 1500);
     } catch (error: any) {
       const errorMsg = error.response?.data?.message || Messages.REGISTRATION_FAILED;
       ToastService.showError(errorMsg);
+      setIsLoading(false);
     }
   };
 
-  const validateField = (name: string, value: any) : void => {
+  const validateField = (name: string, value: any): void => {
     let errors = formErrors;
 
     switch (name) {
@@ -75,7 +79,7 @@ const RegisterUser = () => {
 
     // Check overall form validity
     setIsValid(Validator.validateUserRegisterRequest(formData) &&
-  Object.values(errors).every(error => error === '')  );
+      Object.values(errors).every(error => error === ''));
   }
 
 
@@ -85,16 +89,14 @@ const RegisterUser = () => {
 
   return (
     <div className="register-container">
-      <button className="back-home-btn" onClick={handleHome} title="Back to Home">
-        ← Back to Home
-      </button>
+
       <div className="register-wrapper">
         <div className="register-header">
           <div className="register-header-icon">✨</div>
           <h1>Create Account</h1>
           <p>Join our community of storytellers</p>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="register-form">
           <div className="form-group">
             <label htmlFor="name" className="form-label">Full Name</label>
@@ -104,6 +106,7 @@ const RegisterUser = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
+              disabled={isLoading}
               className={`form-input ${formErrors.nameError ? 'error-input' : ''}`}
               placeholder="Enter your full name"
             />
@@ -119,6 +122,7 @@ const RegisterUser = () => {
               value={formData.email}
               onChange={handleChange}
               className={`form-input ${formErrors.emailError ? 'error-input' : ''}`}
+              disabled={isLoading}
               placeholder="Enter your email address"
             />
             {formErrors.emailError && <span className="error-message">{formErrors.emailError}</span>}
@@ -133,6 +137,7 @@ const RegisterUser = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
+                disabled={isLoading}
                 className={`form-input ${formErrors.passwordError ? 'error-input' : ''}`}
                 placeholder="Enter your password"
               />
@@ -159,6 +164,7 @@ const RegisterUser = () => {
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
+                disabled={isLoading}
                 className={`form-input ${formErrors.confirmPasswordError ? 'error-input' : ''}`}
                 placeholder="Confirm your password"
               />
@@ -176,10 +182,27 @@ const RegisterUser = () => {
             {formErrors.confirmPasswordError && <span className="error-message">{formErrors.confirmPasswordError}</span>}
           </div>
 
-          <button type="submit" disabled={!isValid} className="submit-button">
-            Create Account
+          <button type="submit" disabled={!isValid || isLoading} className="submit-button">
+            {isLoading ? (
+              <>
+                <span className="spinner"></span>
+                <span className="button-text">Setting up your account...</span>
+              </>
+            ) : (
+              'Create Account'
+            )}
           </button>
         </form>
+
+        {isLoading && (
+          <div className="loading-overlay">
+            <div className="loading-content">
+              <div className="spinner-large"></div>
+              <p className="loading-message">Sending verification code to your email...</p>
+              <p className="loading-subtext">This may take a few seconds</p>
+            </div>
+          </div>
+        )}
 
         <div className="login-link">
           Already have an account? <a href="/users/login">Sign in</a>

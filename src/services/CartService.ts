@@ -1,3 +1,4 @@
+import axiosInstance from '../utils/axiosConfig';
 import axios, { AxiosError } from 'axios';
 import { CartResponseDTO } from '../model/CartResponseDTO';
 import { AddToCartRequest } from '../model/AddToCartRequest';
@@ -93,7 +94,7 @@ export class CartService {
         };
       }
 
-      const response = await axios.post('/cart/add', request);
+      const response = await axiosInstance.post('/cart/add', request);
 
       if (response.data.cart) {
         this.currentCart = response.data.cart;
@@ -121,7 +122,7 @@ export class CartService {
    */
   static async getCart(): Promise<ApiResponse<CartResponseDTO>> {
     try {
-      const response = await axios.get('/cart');
+      const response = await axiosInstance.get('/cart');
 
       const data = response.data;
       let cart: CartResponseDTO;
@@ -180,7 +181,7 @@ export class CartService {
         };
       }
 
-      const response = await axios.delete(`/cart/items/${cartItemId}`);
+      const response = await axiosInstance.delete(`/cart/items/${cartItemId}`);
 
       if (response.data.cart) {
         this.currentCart = response.data.cart;
@@ -218,7 +219,7 @@ export class CartService {
         };
       }
 
-      const response = await axios.post('/wallet/checkout');
+      const response = await axiosInstance.post('/wallet/checkout');
 
       // Clear cart after successful checkout
       this.currentCart = null;

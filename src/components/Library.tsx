@@ -6,6 +6,7 @@ import { AuthService } from '../services/AuthService';
 import { ToastService } from '../services/ToastService';
 import { Messages } from '../messages/messages';
 import AudioPlayer from './AudioPlayer';
+import ReviewModal from './ReviewModal';
 import '../styles/Library.css';
 
 const Library = () => {
@@ -14,10 +15,20 @@ const Library = () => {
   const [library, setLibrary] = useState<StorybookResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
+  const [showReviewModal, setShowReviewModal] = useState<boolean>(false);
+  const [selectedBookForReview, setSelectedBookForReview] = useState<number>(0);
+  const [userIdForReview, setUserIdForReview] = useState<number>(0);
 
   useEffect(() => {
     fetchLibrary();
   }, [location]);
+
+  useEffect(() => {
+    const userId = AuthService.getUserId();
+    if (userId) {
+      setUserIdForReview(userId);
+    }
+  }, []);
 
   const fetchLibrary = async () => {
     try {
@@ -108,6 +119,16 @@ const Library = () => {
                   
 
                   <AudioPlayer audioUrl={item.audioUrl} title={item.title} />
+                  
+                  <button 
+                    className="write-review-btn"
+                    onClick={() => {
+                      setSelectedBookForReview(item.id);
+                      setShowReviewModal(true);
+                    }}
+                  >
+                    <i className="fas fa-star"></i> {Messages.WRITE_REVIEW}
+                  </button>
                 </div>
               </div>
             ))}
@@ -126,6 +147,16 @@ const Library = () => {
           </button>
         </div>
       )}
+
+      <ReviewModal 
+        storyBookId={selectedBookForReview}
+        userId={userIdForReview}
+        isOpen={showReviewModal}
+        onClose={() => setShowReviewModal(false)}
+        onSuccess={() => {
+          setShowReviewModal(false);
+        }}
+      />
     </div>
   );
 };

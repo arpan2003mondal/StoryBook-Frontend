@@ -6,6 +6,8 @@ import { CartService } from '../services/CartService';
 import { AuthService } from '../services/AuthService';
 import { ToastService } from '../services/ToastService';
 import { Messages } from '../messages/messages';
+import ReviewModal from './ReviewModal';
+import ReviewsList from './ReviewsList';
 import '../styles/StorybookDetail.css';
 
 const StorybookDetail = () => {
@@ -14,6 +16,9 @@ const StorybookDetail = () => {
   const [storybook, setStorybook] = useState<StorybookResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState<boolean>(false);
+  const [showReviewsList, setShowReviewsList] = useState<boolean>(false);
+  const [userIdForReview, setUserIdForReview] = useState<number>(0);
 
   useEffect(() => {
     const fetchStorybook = async () => {
@@ -38,6 +43,13 @@ const StorybookDetail = () => {
 
     fetchStorybook();
   }, [id, navigate]);
+
+  useEffect(() => {
+    const userId = AuthService.getUserId();
+    if (userId) {
+      setUserIdForReview(userId);
+    }
+  }, []);
 
   const handleBack = () => {
     navigate('/storybooks');
@@ -116,6 +128,37 @@ const StorybookDetail = () => {
               <span>{isAddingToCart ? Messages.ADDING_TO_CART : Messages.ADD_TO_CART_BUTTON}</span>
             </button>
           </div>
+
+          {userIdForReview > 0 && (
+            <div className="review-buttons-section">
+              {/* <button 
+                className="btn-write-review"
+                onClick={() => setShowReviewModal(true)}
+              >
+                <i className="fas fa-pen-fancy"></i> {Messages.WRITE_REVIEW}
+              </button> */}
+              <button 
+                className="btn-view-reviews"
+                onClick={() => setShowReviewsList(true)}
+              >
+                <i className="fas fa-comments"></i> {Messages.SHOW_REVIEWS}
+              </button>
+            </div>
+          )}
+
+          {/* <ReviewModal 
+            storyBookId={storybook.id}
+            userId={userIdForReview}
+            isOpen={showReviewModal}
+            onClose={() => setShowReviewModal(false)}
+            onSuccess={() => setShowReviewsList(true)}
+          /> */}
+
+          <ReviewsList
+            storyBookId={storybook.id}
+            isOpen={showReviewsList}
+            onClose={() => setShowReviewsList(false)}
+          />
         </div>
       </div>
     </div>

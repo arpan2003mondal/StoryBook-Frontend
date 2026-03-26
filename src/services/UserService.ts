@@ -1,27 +1,24 @@
-import axios from 'axios';
+import axiosInstance from '../utils/axiosConfig';
 import { StorybookResponse } from '../model/StorybookResponse';
 import { WalletBalanceDTO } from '../model/WalletBalanceDTO';
 import { ChangePasswordRequest } from '../model/ChangePasswordRequest';
 import { ChangeUsernameRequest } from '../model/ChangeUsernameRequest';
 import { UserProfile } from '../model/UserProfile';
 
-
-
-
 export class UserService {
   static getProfile(): Promise<UserProfile> {
-    return axios.get('/users/profile').then(response => response.data);
+    return axiosInstance.get('/users/profile').then(response => response.data);
   }
 
   static getWalletBalance(): Promise<WalletBalanceDTO> {
-    return axios.get('/wallet/balance').then(response => response.data);
+    return axiosInstance.get('/wallet/balance').then(response => response.data);
   }
 
   /**
    * Get user's library (purchased storybooks)
    */
   static getUserLibrary(): Promise<StorybookResponse[]> {
-    return axios
+    return axiosInstance
       .get('/library')
       .then(response => {
         const data = response.data;
@@ -50,7 +47,7 @@ export class UserService {
    * Change user's password
    */
   static changePassword(request: ChangePasswordRequest): Promise<any> {
-    return axios.post('/users/change-password', {
+    return axiosInstance.post('/users/change-password', {
       oldPassword: request.oldPassword,
       newPassword: request.newPassword
     }).then(response => response.data);
@@ -60,14 +57,14 @@ export class UserService {
    * Change user's username
    */
   static changeUsername(request: ChangeUsernameRequest): Promise<any> {
-    return axios.post('/users/change-username', request).then(response => response.data);
+    return axiosInstance.post('/users/change-username', request).then(response => response.data);
   }
 
   /**
    * Logout user
    */
   static logout(): Promise<any> {
-    return axios.post('/users/logout').then(response => response.data);
+    return axiosInstance.post('/users/logout').then(response => response.data);
   }
 }
 

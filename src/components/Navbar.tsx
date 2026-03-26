@@ -20,17 +20,26 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
-  // Don't show navbar on auth pages
-  const hideNavbar =
+  // Unauthenticated pages where navbar should show
+  const isUnauthenticatedPage =
     location.pathname === '/users/login' ||
     location.pathname === '/users/register' ||
-    location.pathname === '/';
+    location.pathname === '/' ||
+    location.pathname === '/users/forgot-password' ||
+    location.pathname === '/users/reset-password';
 
   useEffect(() => {
-    if (!hideNavbar) {
+    // Don't check authentication on unauthenticated pages
+    if (!isUnauthenticatedPage) {
       checkAuthentication();
+    } else {
+      // On unauthenticated pages, ensure authenticated state is false
+      setIsAuthenticated(false);
+      setUserProfile(null);
+      setWalletBalance(null);
+      setCartItems(null);
     }
-  }, [location, hideNavbar]);
+  }, [location, isUnauthenticatedPage]);
 
   // Subscribe to cart updates
   useEffect(() => {
@@ -118,15 +127,16 @@ const Navbar = () => {
     setMobileMenuOpen(false);
   };
 
-  if (hideNavbar) {
-    return null;
-  }
+  const handleSignUp = () => {
+    navigate('/users/register');
+    setMobileMenuOpen(false);
+  };
 
   return (
-    <nav className="navbar">
+    <nav className={`navbar ${isUnauthenticatedPage && !isAuthenticated ? 'navbar-simple' : ''}`}>
       <div className="navbar-container">
         {/* Logo */}
-        <div className="navbar-logo" onClick={handleDashboard} title="Go to Dashboard">
+        <div className="navbar-logo" onClick={isAuthenticated ? handleDashboard : handleHome} title={isAuthenticated ? "Go to Dashboard" : "Go to Home"}>
           <i className="fas fa-book-open logo-icon"></i>
           <span className="logo-text">StoryBook</span>
         </div>
@@ -143,20 +153,14 @@ const Navbar = () => {
             <div className="nav-items">
               <button
                 className="nav-button signin-btn"
-                onClick={() => {
-                  navigate('/users/login');
-                  setMobileMenuOpen(false);
-                }}
+                onClick={handleSignIn}
               >
                 <i className="fas fa-sign-in-alt"></i>
                 <span>{Messages.SIGN_IN}</span>
               </button>
               <button
                 className="nav-button signup-btn"
-                onClick={() => {
-                  navigate('/users/register');
-                  setMobileMenuOpen(false);
-                }}
+                onClick={handleSignUp}
               >
                 <i className="fas fa-user-plus"></i>
                 <span>{Messages.SIGN_UP}</span>
@@ -175,6 +179,7 @@ const Navbar = () => {
                   <span className="cart-badge">{cartItems.totalItems}</span>
                 )}
               </div>
+
 
               {/* Library Button */}
               <button className="nav-icon-btn library-btn" onClick={handleLibrary} title="My Library" aria-label="My Library">

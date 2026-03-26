@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserService } from '../services/UserService';
+import { AuthService } from '../services/AuthService';
 import { ChangePasswordRequest } from '../model/ChangePasswordRequest';
 import { Messages } from '../messages/messages';
 import { ToastService } from '../services/ToastService';
@@ -113,14 +114,12 @@ const ChangePassword = () => {
         confirmNewPassword: false
       });
 
-      // Logout and redirect to login
-      setTimeout(async () => {
-        try {
-          await UserService.logout();
-        } catch (error) {
-          // Logout error handled silently
-        }
-        navigate('/users/login');
+      // Logout immediately to clear auth state
+      AuthService.logout();
+
+      // Redirect to login after showing toast with page reload
+      setTimeout(() => {
+        window.location.href = '/users/login';
       }, 2000);
     } catch (error: any) {
       const errorMsg = error.response?.data?.message || error.response?.data || Messages.CHANGE_PASSWORD_FAILED;

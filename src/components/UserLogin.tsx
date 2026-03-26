@@ -51,9 +51,7 @@ const UserLogin = () => {
 
   return (
     <div className="login-container">
-      <button className="back-home-btn" onClick={handleHome} title={Messages.BACK_TO_HOME}>
-        ← {Messages.BACK_TO_HOME}
-      </button>
+
       <div className="login-wrapper">
         <div className="login-header">
           <div className="login-header-icon">🔐</div>
@@ -101,6 +99,9 @@ const UserLogin = () => {
                   <i className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
                 </button>
               )}
+            </div>
+            <div className="password-actions">
+              <a href="/users/forgot-password" className="forgot-password-link">{Messages.FORGOT_PASSWORD_LINK}</a>
             </div>
           </div>
 

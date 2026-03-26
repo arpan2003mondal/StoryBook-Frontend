@@ -207,6 +207,43 @@
   color: #27ae60;
 }
 
+.rating-display {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.rating-stars {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+
+.rating-stars .fa-star {
+  font-size: 12px;
+  transition: color 0.2s ease;
+}
+
+.rating-stars .fa-star.filled {
+  color: #ffc107;
+}
+
+.rating-stars .fa-star.empty {
+  color: #ddd;
+}
+
+.rating-value {
+  font-weight: 600;
+  color: #333;
+  font-size: 13px;
+}
+
+.no-rating {
+  color: #999;
+  font-size: 12px;
+}
+
 .created-date {
   color: #999;
   font-size: 12px;

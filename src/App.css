@@ -1,5 +1,37 @@
+html,
+body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 .App {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
   text-align: center;
+}
+
+/* Navbar doesn't take up space in flex */
+.navbar-wrapper {
+  flex-shrink: 0;
+}
+
+/* Main content area - scrollable */
+main,
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-top: 75px;
+  padding-bottom: 48px;
 }
 
 .App-logo {

@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { AuthService } from '../services/AuthService';
 import { CartService } from '../services/CartService';
 import { StoryBookService } from '../services/StoryBookService';
+import { ReviewService } from '../services/ReviewService';
 import { StorybookResponse } from '../model/StorybookResponse';
+import { AverageRatingResponse } from '../model/ReviewSubmitRequest';
 import { ToastService } from '../services/ToastService';
 import { Messages } from '../messages/messages';
 import AudioPreviewModal from './AudioPreviewModal';
@@ -19,6 +21,7 @@ const Storybooks = () => {
   const [addingToCart, setAddingToCart] = useState<number | null>(null);
   const [previewAudioUrl, setPreviewAudioUrl] = useState<string | null>(null);
   const [previewBookTitle, setPreviewBookTitle] = useState('');
+  const [ratings, setRatings] = useState<{ [key: number]: AverageRatingResponse }>({});
 
   useEffect(() => {
     fetchAllStorybooks();
@@ -30,17 +33,32 @@ const Storybooks = () => {
       const data = await StoryBookService.getAllStorybooks();
       setStorybooks(data);
       setError('');
+      fetchRatingsForBooks(data);
     } catch (err: any) {
       if (err.response?.status === 401) {
         AuthService.logout();
         navigate('/users/login');
       } else {
-        setError(err.response?.data?.message || Messages.FAILED_TO_FETCH_STORYBOOKS);
-      }ToastService.showError(err.response?.data?.message || Messages.FAILED_TO_FETCH_STORYBOOKS);
-        
+        const errorMsg = err.response?.data?.message || Messages.FAILED_TO_FETCH_STORYBOOKS;
+        setError(errorMsg);
+        ToastService.showError(errorMsg);
+      }
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchRatingsForBooks = async (books: StorybookResponse[]) => {
+    const ratingsMap: { [key: number]: AverageRatingResponse } = {};
+    for (const book of books) {
+      try {
+        const rating = await ReviewService.getAverageRating(book.id);
+        ratingsMap[book.id] = rating;
+      } catch (err) {
+        console.error(`Failed to fetch rating for book ${book.id}`);
+      }
+    }
+    setRatings(ratingsMap);
   };
   
   const handleSearch = async (e: React.FormEvent) => {
@@ -55,13 +73,15 @@ const Storybooks = () => {
       const data = await StoryBookService.searchStorybooks(searchKeyword);
       setStorybooks(data);
       setError('');
+      fetchRatingsForBooks(data);
     } catch (err: any) {
       if (err.response?.status === 401) {
         AuthService.logout();
         navigate('/users/login');
       } else {
-        ToastService.showError(err.response?.data?.message || Messages.FAILED_TO_SEARCH_STORYBOOKS);
-        setError(err.response?.data?.message || Messages.FAILED_TO_SEARCH_STORYBOOKS);
+        const errorMsg = err.response?.data?.message || Messages.FAILED_TO_SEARCH_STORYBOOKS;
+        setError(errorMsg);
+        ToastService.showError(errorMsg);
       }
     } finally {
       setIsSearching(false);
@@ -96,7 +116,8 @@ const Storybooks = () => {
         AuthService.logout();
         navigate('/users/login');
       } else {
-        ToastService.showError(err.response?.data?.message || Messages.FAILED_TO_ADD_TO_CART_FALLBACK);
+        const errorMsg = err.response?.data?.message || Messages.FAILED_TO_ADD_TO_CART_FALLBACK;
+        ToastService.showError(errorMsg);
       }
     } finally {
       setAddingToCart(null);
@@ -171,9 +192,23 @@ const Storybooks = () => {
               {/* <p className="description">{book.description}</p> */}
               <div className="book-footer">
                 <span className="price">${book.price}</span>
-                {/* <span className="created-date">
-                  {new Date(book.createdAt).toLocaleDateString()}
-                </span> */}
+                <div className="rating-display">
+                  {ratings[book.id] && ratings[book.id].totalReviews > 0 ? (
+                    <>
+                      <span className="rating-stars">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <i
+                            key={star}
+                            className={`fas fa-star ${star <= Math.round(ratings[book.id].averageRating) ? 'filled' : 'empty'}`}
+                          ></i>
+                        ))}
+                      </span>
+                      <span className="rating-value">{ratings[book.id].averageRating.toFixed(1)}</span>
+                    </>
+                  ) : (
+                    <span className="no-rating">{Messages.NO_RATING}</span>
+                  )}
+                </div>
               </div>
 
               <div className="card-actions">
